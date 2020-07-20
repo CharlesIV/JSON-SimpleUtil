@@ -92,7 +92,7 @@ public class JsonWriter {
         jp.json = sb.toString();
     }
     
-    public void write(String file) {
+    public void write(String file) throws IOException {
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             writer.append("{\n");
             for(JsonValue jd : data)
@@ -101,8 +101,6 @@ public class JsonWriter {
                 else
                     writer.append(jd.write());
             writer.append("}");
-        } catch (IOException ex) {
-            System.err.println("Unable to write JSON to " + file);
         }
         reset();
     }
