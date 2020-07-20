@@ -19,79 +19,6 @@ public class JsonObject extends JsonValue {
         startLength = sb.length();
     }
     
-    @Override
-    public void put(String name, double number) {
-        if(sb.length() > startLength)
-            super.appendEnding();
-        sb.append(indent);
-        super.put(name, number);
-    }
-    
-    @Override
-    public void put(String name, String string) {
-        if(sb.length() > startLength)
-            super.appendEnding();
-        sb.append(indent);
-        super.put(name, string);
-        
-    }
-    
-    @Override
-    public void put(String name, boolean bool) {
-        if(sb.length() > startLength)
-            super.appendEnding();
-        sb.append(indent);
-        super.put(name, bool);
-    }
-    
-    @Override
-    public void put(String name, char character) {
-        if(sb.length() > startLength)
-            super.appendEnding();
-        sb.append(indent);
-        super.put(name, character);
-    }
-    
-    @Override
-    public void put(String name) {
-        if(sb.length() > startLength)
-            super.appendEnding();
-        sb.append(indent);
-        super.put(name);
-    }
-    
-    @Override
-    public void put(String name, double[] numbers) {
-        if(sb.length() > startLength)
-            super.appendEnding();
-        sb.append(indent);
-        super.put(name, numbers);
-    }
-    
-    @Override
-    public void put(String name, String[] strings) {
-        if(sb.length() > startLength)
-            super.appendEnding();
-        sb.append(indent);
-        super.put(name, strings);
-    }
-    
-    @Override
-    public void put(String name, boolean[] bools) {
-        if(sb.length() > startLength)
-            super.appendEnding();
-        sb.append(indent);
-        super.put(name, bools);
-    }
-    
-    @Override
-    public void put(String name, char[] characters) {
-        if(sb.length() > startLength)
-            super.appendEnding();
-        sb.append(indent);
-        super.put(name, characters);
-    }
-    
     public JsonObject putObject(String name) {
         JsonObject jo = new JsonObject(name);
         jo.sb.insert(0, indent);
@@ -99,6 +26,14 @@ public class JsonObject extends JsonValue {
         jObjects.put(sb.length()+count++, jo);
         jo.startLength+=indent.length();
         return jo;
+    }
+    
+    @Override
+    protected void appendBeginning(String name) {
+        if(sb.length() > startLength)
+            super.appendEnding();
+        sb.append(indent);
+        super.appendBeginning(name);
     }
     
     @Override

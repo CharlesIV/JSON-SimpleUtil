@@ -4,47 +4,41 @@ package com.reactnebula.simplejsonutil;
  *
  * @author Charles
  */
-public class JsonValue {
+class JsonValue {
     StringBuilder sb = new StringBuilder();
     
     public void put(String name, double number) {
-        sb.append('"').append(name).append('"');
-        sb.append(":");
+        appendBeginning(name);
         sb.append(number);
         appendEnding();
     }
     
     public void put(String name, String string) {
-        sb.append('"').append(name).append('"');
-        sb.append(":");
+        appendBeginning(name);
         sb.append('"').append(string).append('"');
         appendEnding();
     }
     
     public void put(String name, boolean bool) {
-        sb.append('"').append(name).append('"');
-        sb.append(":");
+        appendBeginning(name);
         sb.append(bool);
         appendEnding();
     }
     
     public void put(String name, char character) {
-        sb.append('"').append(name).append('"');
-        sb.append(":");
+        appendBeginning(name);
         sb.append('"').append(character).append('"');
         appendEnding();
     }
     
     public void put(String name) {
-        sb.append('"').append(name).append('"');
-        sb.append(":");
+        appendBeginning(name);
         sb.append("null");
         appendEnding();
     }
     
     public void put(String name, double[] numbers) {
-        sb.append('"').append(name).append('"');
-        sb.append(":");
+        appendBeginning(name);
         sb.append("[");
         for(int i = 0; i < numbers.length; i++) {
             sb.append(numbers[i]);
@@ -56,8 +50,7 @@ public class JsonValue {
     }
     
     public void put(String name, String[] strings) {
-        sb.append('"').append(name).append('"');
-        sb.append(":");
+        appendBeginning(name);
         sb.append("[");
         for(int i = 0; i < strings.length; i++) {
             sb.append('"').append(strings[i]).append('"');
@@ -69,8 +62,7 @@ public class JsonValue {
     }
     
     public void put(String name, boolean[] bools) {
-        sb.append('"').append(name).append('"');
-        sb.append(":");
+        appendBeginning(name);
         sb.append("[");
         for(int i = 0; i < bools.length; i++) {
             sb.append(bools[i]);
@@ -82,8 +74,7 @@ public class JsonValue {
     }
     
     public void put(String name, char[] characters) {
-        sb.append('"').append(name).append('"');
-        sb.append(":");
+        appendBeginning(name);
         sb.append("[");
         for(int i = 0; i < characters.length; i++) {
             sb.append('"').append(characters[i]).append('"');
@@ -101,6 +92,11 @@ public class JsonValue {
     
     String write() {
         return sb.toString();
+    }
+    
+    protected void appendBeginning(String name) {
+        sb.append('"').append(name).append('"');
+        sb.append(":");
     }
     
     protected void appendEnding() {
