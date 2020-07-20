@@ -8,7 +8,7 @@ import java.util.HashMap;
  */
 public class JsonObject extends JsonValue {
     
-    int startLength;
+    int startLength, lastPos, count;
     String indent = "    ";
     
     HashMap<Integer, JsonObject> jObjects = new HashMap<>();
@@ -95,9 +95,9 @@ public class JsonObject extends JsonValue {
     public JsonObject putObject(String name) {
         JsonObject jo = new JsonObject(name);
         jo.sb.insert(0, indent);
-        jo.startLength = jo.sb.length();
         jo.indent = indent + "    ";
-        jObjects.put(sb.length(), jo);
+        jObjects.put(sb.length()+count++, jo);
+        jo.startLength+=indent.length();
         return jo;
     }
     
@@ -111,12 +111,15 @@ public class JsonObject extends JsonValue {
     @Override
     String write() {
         sb.append("\n").append(indent.substring(4, indent.length())).append("},\n");
+        lastPos = 0;
         jObjects.forEach((i, jo) -> {
-            if(sb.charAt(i)!=',')
-                sb.insert(i, ",");
-            sb.insert(i+2, jo.write());
-            if(sb.charAt(i+jo.sb.length()+indent.length()-2) == '}') 
-                sb.deleteCharAt(i+jo.sb.length());
+            int ii = i + lastPos--;
+            if(sb.charAt(ii)!=',')
+                sb.insert(ii, ",");
+            sb.insert(ii+2, jo.write());
+            if(sb.charAt(ii+jo.sb.length()+indent.length()-2) == '}') 
+                sb.deleteCharAt(ii+jo.sb.length());
+            lastPos += jo.sb.length();
         });
         return sb.toString();
     }

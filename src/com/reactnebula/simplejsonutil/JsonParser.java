@@ -140,9 +140,15 @@ public class JsonParser {
             if(closeBracket < openBracket || openBracket == -1)
                 jo.sb.append(jString.split("\n\\}")[0]);
             else {
-                //Determine how many open braces before closing
+                while(closeBracket > openBracket) {
+                    closeBracket = jString.indexOf("}", closeBracket+1);
+                    openBracket = jString.indexOf("{", closeBracket+1);
+                    if(openBracket == -1)
+                        break;
+                }
+                jo.sb.append(jString.subSequence(0, closeBracket));
+                jo.sb.append("}");
             }
-            System.out.println((jo.sb));
             return jo;
         } else
             throw new JsonValueNotFoundException(name);
