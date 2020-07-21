@@ -3,6 +3,7 @@ package com.reactnebula.simplejsonutil;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 /**
  *
@@ -47,7 +48,18 @@ public class JsonParser {
         return result;
     }
     
-    public double parseNumber(String name) throws JsonValueNotFoundException {
+    public int parseInteger(String name) throws JsonValueNotFoundException {
+        if(json.contains(name+"\":")) {
+            String find = json.split(name + "\":")[1];
+            String result = find.split("\n")[0];
+            if(result.endsWith(","))
+                result = result.replace(",", "");
+            return Integer.parseInt(result);
+        } else
+            throw new JsonValueNotFoundException(name);
+    }
+    
+    public double parseDouble(String name) throws JsonValueNotFoundException {
         if(json.contains(name+"\":")) {
             String find = json.split(name + "\":")[1];
             String result = find.split("\n")[0];
@@ -91,7 +103,19 @@ public class JsonParser {
             throw new JsonValueNotFoundException(name);
     }
     
-    public double[] parseNumberArray(String name) throws JsonValueNotFoundException {
+    public int[] parseIntegerArray(String name) throws JsonValueNotFoundException {
+        if(json.contains(name+"\":")) {
+            String find = json.split(name + "\":\\[")[1].split("\\]")[0];
+            String[] list = find.split(","); 
+            int[] result = new int[list.length];
+            for(int i = 0; i < list.length; i++)
+                result[i] = Integer.parseInt(list[i].trim());
+            return result;
+        } else
+            throw new JsonValueNotFoundException(name);
+    }
+    
+    public double[] parseDoubleArray(String name) throws JsonValueNotFoundException {
         if(json.contains(name+"\":")) {
             String find = json.split(name + "\":\\[")[1].split("\\]")[0];
             String[] list = find.split(","); 
@@ -158,6 +182,24 @@ public class JsonParser {
                 jo.sb.append("}");
             }
             return jo;
+        } else
+            throw new JsonValueNotFoundException(name);
+    }
+    
+    public JsonObject[] parseObjectArray(String name) throws JsonValueNotFoundException {
+        if(json.contains(name+"\":[")) {
+            int arrayStart = json.indexOf(name + "\":[");
+            int arrayEnd = json.indexOf("\n]", arrayStart);
+            String array = json.substring(arrayStart+name.length()+4, arrayEnd);
+            String[] objects = array.split("},");
+            JsonObject[] jObjects = new JsonObject[objects.length];
+            for(int i = 0; i < objects.length; i++) {
+                JsonObject temp = new JsonObject("temp");
+                temp.sb.delete(0, temp.sb.length());
+                temp.sb.append(objects[i]);
+                jObjects[i] = temp;
+            }
+            return jObjects;
         } else
             throw new JsonValueNotFoundException(name);
     }

@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * @author Charles
  */
 public class JsonWriter {
-    ArrayList<JsonValue> data = new ArrayList<>();
+    ArrayList<JsonData> data = new ArrayList<>();
     
     public JsonObject putObject(String name) {
         JsonObject jo = new JsonObject(name);
@@ -20,6 +20,12 @@ public class JsonWriter {
     
     public void putObject(JsonObject jo) {
         data.add(jo);
+    }
+    
+    public JsonObjectArray putObjectArray(String name) {
+        JsonObjectArray joa = new JsonObjectArray(name);
+        data.add(joa);
+        return joa;
     }
     
     public void put(String name, double number) {
@@ -43,6 +49,12 @@ public class JsonWriter {
     public void put(String name, char character) {
         JsonValue jd = new JsonValue();
         jd.put(name, character);
+        data.add(jd);
+    }
+    
+    public void put(String name, int[] numbers) {
+        JsonValue jd = new JsonValue();
+        jd.put(name, numbers);
         data.add(jd);
     }
     
@@ -83,7 +95,7 @@ public class JsonWriter {
     public void write(JsonParser jp) {
         StringBuilder sb = new StringBuilder();
         sb.append("{\n");
-        for(JsonValue jd : data)
+        for(JsonData jd : data)
             if(data.indexOf(jd)==data.size()-1)
                 sb.append(jd.writeLast());
             else
@@ -95,7 +107,7 @@ public class JsonWriter {
     public void write(String file) throws IOException {
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             writer.append("{\n");
-            for(JsonValue jd : data)
+            for(JsonData jd : data)
                 if(data.indexOf(jd)==data.size()-1)
                     writer.append(jd.writeLast());
                 else

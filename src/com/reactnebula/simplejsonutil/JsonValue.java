@@ -4,8 +4,13 @@ package com.reactnebula.simplejsonutil;
  *
  * @author Charles
  */
-class JsonValue {
-    StringBuilder sb = new StringBuilder();
+class JsonValue extends JsonData {
+    
+    public void put(String name, int number) {
+        appendBeginning(name);
+        sb.append(number);
+        appendEnding();
+    }
     
     public void put(String name, double number) {
         appendBeginning(name);
@@ -34,6 +39,18 @@ class JsonValue {
     public void put(String name) {
         appendBeginning(name);
         sb.append("null");
+        appendEnding();
+    }
+    
+    public void put(String name, int[] numbers) {
+        appendBeginning(name);
+        sb.append("[");
+        for(int i = 0; i < numbers.length; i++) {
+            sb.append(numbers[i]);
+            if(i < numbers.length-1)
+                sb.append(", ");
+        }
+        sb.append("]");
         appendEnding();
     }
     
@@ -85,11 +102,13 @@ class JsonValue {
         appendEnding();
     }
     
+    @Override
     String writeLast() {
         sb.deleteCharAt(sb.length()-2);
         return write();
     }
     
+    @Override
     String write() {
         return sb.toString();
     }
