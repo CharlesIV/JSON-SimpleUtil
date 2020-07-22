@@ -14,7 +14,8 @@ public class JsonObject extends JsonValue {
     HashMap<Integer, JsonObject> jObjects = new HashMap<>();
     
     public JsonObject(String name) {
-        sb.append('"').append(name).append('"').append(":");
+        if(!name.equals(""))
+            sb.append('"').append(name).append('"').append(":");
         sb.append("{\n");
         startLength = sb.length();
     }
