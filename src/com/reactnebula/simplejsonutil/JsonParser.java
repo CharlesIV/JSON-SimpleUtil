@@ -47,82 +47,59 @@ public class JsonParser {
         return result;
     }
     
-    public byte parseByte(String name) throws JsonValueNotFoundException {
+    private String findStringedValue(String name) throws JsonValueNotFoundException {
         if(json.contains(name+"\":null"))
-            return 0;
+            return "";
         if(json.contains(name+"\":")) {
             String find = json.split(name + "\":")[1];
             String result = find.split("\n")[0];
             if(result.endsWith(","))
                 result = result.replace(",", "");
-            return Byte.parseByte(result);
+            return result;
         } else
             throw new JsonValueNotFoundException(name);
+    }
+    
+    public byte parseByte(String name) throws JsonValueNotFoundException {
+        String result = findStringedValue(name);
+        if(result.equals(""))
+            return 0;
+        return Byte.parseByte(result);
     }
     
     public short parseShort(String name) throws JsonValueNotFoundException {
-        if(json.contains(name+"\":null"))
+        String result = findStringedValue(name);
+        if(result.equals(""))
             return 0;
-        if(json.contains(name+"\":")) {
-            String find = json.split(name + "\":")[1];
-            String result = find.split("\n")[0];
-            if(result.endsWith(","))
-                result = result.replace(",", "");
-            return Short.parseShort(result);
-        } else
-            throw new JsonValueNotFoundException(name);
+        return Short.parseShort(result);
     }
     
     public int parseInteger(String name) throws JsonValueNotFoundException {
-        if(json.contains(name+"\":null"))
+        String result = findStringedValue(name);
+        if(result.equals(""))
             return 0;
-        if(json.contains(name+"\":")) {
-            String find = json.split(name + "\":")[1];
-            String result = find.split("\n")[0];
-            if(result.endsWith(","))
-                result = result.replace(",", "");
-            return Integer.parseInt(result);
-        } else
-            throw new JsonValueNotFoundException(name);
+        return Integer.parseInt(result);
     }
     
     public float parseFloat(String name) throws JsonValueNotFoundException {
-        if(json.contains(name+"\":null"))
+        String result = findStringedValue(name);
+        if(result.equals(""))
             return 0;
-        if(json.contains(name+"\":")) {
-            String find = json.split(name + "\":")[1];
-            String result = find.split("\n")[0];
-            if(result.endsWith(","))
-                result = result.replace(",", "");
-            return Float.parseFloat(result);
-        } else
-            throw new JsonValueNotFoundException(name);
+        return Float.parseFloat(result);
     }
     
     public double parseDouble(String name) throws JsonValueNotFoundException {
-        if(json.contains(name+"\":null"))
+        String result = findStringedValue(name);
+        if(result.equals(""))
             return 0;
-        if(json.contains(name+"\":")) {
-            String find = json.split(name + "\":")[1];
-            String result = find.split("\n")[0];
-            if(result.endsWith(","))
-                result = result.replace(",", "");
-            return Double.parseDouble(result);
-        } else
-            throw new JsonValueNotFoundException(name);
+        return Double.parseDouble(result);
     }
     
     public long parseLong(String name) throws JsonValueNotFoundException {
-        if(json.contains(name+"\":null"))
+        String result = findStringedValue(name);
+        if(result.equals(""))
             return 0;
-        if(json.contains(name+"\":")) {
-            String find = json.split(name + "\":")[1];
-            String result = find.split("\n")[0];
-            if(result.endsWith(","))
-                result = result.replace(",", "");
-            return Long.parseLong(result);
-        } else
-            throw new JsonValueNotFoundException(name);
+        return Long.parseLong(result);
     }
     
     public String parseString(String name) throws JsonValueNotFoundException {
@@ -139,27 +116,15 @@ public class JsonParser {
     }
     
     public boolean parseBoolean(String name) throws JsonValueNotFoundException {
-        if(json.contains(name+"\":")) {
-            String find = json.split(name + "\":")[1];
-            String result = find.split("\n")[0];
-            if(result.endsWith(","))
-                result = result.replace(",", "");
-            return Boolean.parseBoolean(result);
-        } else
-            throw new JsonValueNotFoundException(name);
+        String result = findStringedValue(name);
+        return Boolean.parseBoolean(result);
     }
     
     public char parseCharacter(String name) throws JsonValueNotFoundException {
-        if(json.contains(name+"\":null"))
+        String result = findStringedValue(name);
+        if(result.equals(""))
             return 0;
-        if(json.contains(name+"\":")) {
-            String find = json.split(name + "\":")[1];
-            String result = find.split("\n")[0];
-            if(result.endsWith(","))
-                result = result.replace(",", "");
-            return result.charAt(1);
-        } else
-            throw new JsonValueNotFoundException(name);
+        return result.charAt(1);
     }
     
     public byte[] parseByteArray(String name) throws JsonValueNotFoundException {
