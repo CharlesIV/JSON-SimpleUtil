@@ -17,6 +17,7 @@
 package Test;
 
 import com.reactnebula.simplejsonutil.JsonObject;
+import com.reactnebula.simplejsonutil.JsonObjectArray;
 import com.reactnebula.simplejsonutil.JsonParser;
 import com.reactnebula.simplejsonutil.JsonValueNotFoundException;
 import com.reactnebula.simplejsonutil.JsonWriter;
@@ -40,6 +41,20 @@ public class SimpleJsonUtil {
             JsonObject contact = emp.putObject("contact");
                 contact.put("email", "jim@aol.com");
                 contact.put("phone", "222-222-2222");
+        
+        JsonObjectArray joa = writer.putObjectArray("items");
+        JsonObject jo = joa.putObject();
+            jo.put("type", "potion");
+            jo.put("duration", 10);
+            jo.put("effect", "health");
+        JsonObject jo2 = joa.putObject();
+            jo2.put("type", "potion");
+            jo2.put("duration", 20);
+            jo2.put("effect", "poison");
+        JsonObject jo3 = joa.putObject();
+            jo3.put("type", "sledgehammer");
+            jo3.put("duration", 30);
+            jo3.put("effect", "death");
         try {
             writer.write("test.json");
         } catch (IOException ex) {
@@ -60,6 +75,8 @@ public class SimpleJsonUtil {
             newParser.setParser(contact2);
             String email = newParser.parseString("email");
             System.out.println(email);
+            
+            parser.parseObjectArray("items");
         } catch(IOException e) {
             e.printStackTrace();
         } catch (JsonValueNotFoundException ex) {

@@ -17,8 +17,8 @@ public class JsonObjectArray extends JsonData {
         sb.append("[\n");
     }
     
-    public JsonObject putObject(String name) {
-        JsonObject jo = new JsonObject(name);
+    public JsonObject putObject() {
+        JsonObject jo = new JsonObject("");
         jo.sb.insert(0, indent);
         jo.startLength+=indent.length();
         jo.indent+=indent;

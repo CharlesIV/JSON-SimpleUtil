@@ -92,6 +92,21 @@ public class JsonWriter {
         data.clear();
     }
     
+    /**
+     * A method that returns an exact copy of the current 
+     * JsonWriter object at the time of calling this method.
+     * 
+     * @return a new JsonWriter object
+     */
+    public JsonWriter copyOf() {
+        JsonWriter jw = new JsonWriter();
+        ArrayList<JsonData> array = new ArrayList<>();
+        for(JsonData jd : data)
+            array.add(jd);
+        jw.data = array;
+        return jw;
+    }
+    
     public void write(JsonParser jp) {
         StringBuilder sb = new StringBuilder();
         sb.append("{\n");

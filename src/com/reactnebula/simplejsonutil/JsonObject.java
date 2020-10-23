@@ -37,6 +37,25 @@ public class JsonObject extends JsonValue {
         super.appendBeginning(name);
     }
     
+    /**
+     * A method that returns an exact copy of the current 
+     * JsonObject at the time of calling this method.
+     * 
+     * @return a new JsonObject
+     */
+    public JsonObject copyOf() {
+        JsonObject jo = new JsonObject("");
+        HashMap<Integer, JsonObject> map = new HashMap<>();
+        map.putAll(jObjects);
+        jo.startLength = startLength;
+        jo.lastPos = lastPos;
+        jo.count = count;
+        jo.indent = indent;
+        jo.jObjects = map;
+        jo.sb = sb;
+        return jo;
+    }
+    
     @Override
     String writeLast() {
         write();
