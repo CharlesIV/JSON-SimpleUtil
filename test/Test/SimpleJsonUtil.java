@@ -16,11 +16,7 @@
  */
 package Test;
 
-import com.reactnebula.simplejsonutil.JsonObject;
-import com.reactnebula.simplejsonutil.JsonObjectArray;
-import com.reactnebula.simplejsonutil.JsonParser;
-import com.reactnebula.simplejsonutil.JsonValueNotFoundException;
-import com.reactnebula.simplejsonutil.JsonWriter;
+import com.reactnebula.simplejsonutil.*;
 import java.io.IOException;
 
 /**
@@ -30,6 +26,7 @@ import java.io.IOException;
 public class SimpleJsonUtil {
     public static void main(String[] args) {
         JsonWriter writer = new JsonWriter();
+        
         writer.put("company", "Numbers R Us");
         writer.put("owner", "John");
         writer.put("departments", new String[]{"finance", "production", "sales", "manager"});
@@ -44,28 +41,25 @@ public class SimpleJsonUtil {
         
         JsonObjectArray joa = writer.putObjectArray("items");
         JsonObject jo = joa.putObject();
-            jo.put("type", "potion");
-            jo.put("duration", 10);
-            jo.put("effect", "health");
+            jo.put("type", "prime");
+            jo.put("value", 3);
+            jo.put("even", false);
         JsonObject jo2 = joa.putObject();
-            jo2.put("type", "potion");
-            jo2.put("duration", 20);
-            jo2.put("effect", "poison");
+            jo2.put("type", "negative");
+            jo2.put("duration", -2);
+            jo2.put("effect", true);
         JsonObject jo3 = joa.putObject();
-            jo3.put("type", "sledgehammer");
-            jo3.put("duration", 30);
-            jo3.put("effect", "death");
+            jo3.put("type", "real");
+            jo3.put("duration", 3.1);
+            jo3.put("effect", false);
         
         CustomerExample ce = new CustomerExample("Charles", "Nibble", "Maryland", 27);
         JsonObject ceo = ce.toJson();
         writer.putObject(ceo);
-        
+        CustomerExample nce = null;
         try {
-            CustomerExample nce = ce.fromJson(ceo);
-            System.out.println(nce);
-        } catch(Exception e) {
-            System.out.println(e.getMessage());
-        }
+            nce = ce.fromJson(ceo);
+        } catch (IncompatibleJsonObjectException ex) {}
             
         try {
             writer.write("test.json");
@@ -74,6 +68,9 @@ public class SimpleJsonUtil {
         }
         
         try {
+            
+            System.out.println(nce);
+            
             JsonParser parser = new JsonParser("test.json");
             boolean manager = parser.parseBoolean("manager");
             System.out.println(manager);
