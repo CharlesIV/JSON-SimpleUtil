@@ -11,7 +11,7 @@ public class JsonObjectArray extends JsonData {
     ArrayList<JsonObject> jObjects = new ArrayList<>();
     String indent = "    ";
     
-    public JsonObjectArray(String name) {
+    JsonObjectArray(String name) {
         sb.append('"').append(name).append('"');
         sb.append(":");
         sb.append("[\n");
@@ -27,6 +27,8 @@ public class JsonObjectArray extends JsonData {
     }
     
     public void putObject(JsonObject jo) {
+        int beginning = jo.sb.indexOf("{");
+        jo.sb.replace(0, beginning, "");
         jo.sb.insert(0, indent);
         jo.startLength+=indent.length();
         jo.indent+=indent;

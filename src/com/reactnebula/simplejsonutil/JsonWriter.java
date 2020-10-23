@@ -28,7 +28,37 @@ public class JsonWriter {
         return joa;
     }
     
+    public void put(String name, byte number) {
+        JsonValue jd = new JsonValue();
+        jd.put(name, number);
+        data.add(jd);
+    }
+    
+    public void put(String name, short number) {
+        JsonValue jd = new JsonValue();
+        jd.put(name, number);
+        data.add(jd);
+    }
+    
+    public void put(String name, int number) {
+        JsonValue jd = new JsonValue();
+        jd.put(name, number);
+        data.add(jd);
+    }
+    
+    public void put(String name, float number) {
+        JsonValue jd = new JsonValue();
+        jd.put(name, number);
+        data.add(jd);
+    }
+    
     public void put(String name, double number) {
+        JsonValue jd = new JsonValue();
+        jd.put(name, number);
+        data.add(jd);
+    }
+    
+    public void put(String name, long number) {
         JsonValue jd = new JsonValue();
         jd.put(name, number);
         data.add(jd);
@@ -52,13 +82,37 @@ public class JsonWriter {
         data.add(jd);
     }
     
+    public void put(String name, byte[] numbers) {
+        JsonValue jd = new JsonValue();
+        jd.put(name, numbers);
+        data.add(jd);
+    }
+    
+    public void put(String name, short[] numbers) {
+        JsonValue jd = new JsonValue();
+        jd.put(name, numbers);
+        data.add(jd);
+    }
+    
     public void put(String name, int[] numbers) {
         JsonValue jd = new JsonValue();
         jd.put(name, numbers);
         data.add(jd);
     }
     
+    public void put(String name, float[] numbers) {
+        JsonValue jd = new JsonValue();
+        jd.put(name, numbers);
+        data.add(jd);
+    }
+    
     public void put(String name, double[] numbers) {
+        JsonValue jd = new JsonValue();
+        jd.put(name, numbers);
+        data.add(jd);
+    }
+    
+    public void put(String name, long[] numbers) {
         JsonValue jd = new JsonValue();
         jd.put(name, numbers);
         data.add(jd);

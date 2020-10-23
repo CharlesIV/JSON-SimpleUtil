@@ -55,6 +55,18 @@ public class SimpleJsonUtil {
             jo3.put("type", "sledgehammer");
             jo3.put("duration", 30);
             jo3.put("effect", "death");
+        
+        CustomerExample ce = new CustomerExample("Charles", "Nibble", "Maryland", 27);
+        JsonObject ceo = ce.toJson();
+        writer.putObject(ceo);
+        
+        try {
+            CustomerExample nce = ce.fromJson(ceo);
+            System.out.println(nce);
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+            
         try {
             writer.write("test.json");
         } catch (IOException ex) {

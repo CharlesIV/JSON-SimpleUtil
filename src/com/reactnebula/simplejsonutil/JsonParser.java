@@ -3,7 +3,6 @@ package com.reactnebula.simplejsonutil;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 
 /**
  *
@@ -48,7 +47,35 @@ public class JsonParser {
         return result;
     }
     
+    public byte parseByte(String name) throws JsonValueNotFoundException {
+        if(json.contains(name+"\":null"))
+            return 0;
+        if(json.contains(name+"\":")) {
+            String find = json.split(name + "\":")[1];
+            String result = find.split("\n")[0];
+            if(result.endsWith(","))
+                result = result.replace(",", "");
+            return Byte.parseByte(result);
+        } else
+            throw new JsonValueNotFoundException(name);
+    }
+    
+    public short parseShort(String name) throws JsonValueNotFoundException {
+        if(json.contains(name+"\":null"))
+            return 0;
+        if(json.contains(name+"\":")) {
+            String find = json.split(name + "\":")[1];
+            String result = find.split("\n")[0];
+            if(result.endsWith(","))
+                result = result.replace(",", "");
+            return Short.parseShort(result);
+        } else
+            throw new JsonValueNotFoundException(name);
+    }
+    
     public int parseInteger(String name) throws JsonValueNotFoundException {
+        if(json.contains(name+"\":null"))
+            return 0;
         if(json.contains(name+"\":")) {
             String find = json.split(name + "\":")[1];
             String result = find.split("\n")[0];
@@ -59,7 +86,22 @@ public class JsonParser {
             throw new JsonValueNotFoundException(name);
     }
     
+    public float parseFloat(String name) throws JsonValueNotFoundException {
+        if(json.contains(name+"\":null"))
+            return 0;
+        if(json.contains(name+"\":")) {
+            String find = json.split(name + "\":")[1];
+            String result = find.split("\n")[0];
+            if(result.endsWith(","))
+                result = result.replace(",", "");
+            return Float.parseFloat(result);
+        } else
+            throw new JsonValueNotFoundException(name);
+    }
+    
     public double parseDouble(String name) throws JsonValueNotFoundException {
+        if(json.contains(name+"\":null"))
+            return 0;
         if(json.contains(name+"\":")) {
             String find = json.split(name + "\":")[1];
             String result = find.split("\n")[0];
@@ -70,7 +112,22 @@ public class JsonParser {
             throw new JsonValueNotFoundException(name);
     }
     
+    public long parseLong(String name) throws JsonValueNotFoundException {
+        if(json.contains(name+"\":null"))
+            return 0;
+        if(json.contains(name+"\":")) {
+            String find = json.split(name + "\":")[1];
+            String result = find.split("\n")[0];
+            if(result.endsWith(","))
+                result = result.replace(",", "");
+            return Long.parseLong(result);
+        } else
+            throw new JsonValueNotFoundException(name);
+    }
+    
     public String parseString(String name) throws JsonValueNotFoundException {
+        if(json.contains(name+"\":null"))
+            return null;
         if(json.contains(name+"\":")) {
             String find = json.split(name + "\":")[1];
             String result = find.split("\n")[0].replace("\"", "");
@@ -93,6 +150,8 @@ public class JsonParser {
     }
     
     public char parseCharacter(String name) throws JsonValueNotFoundException {
+        if(json.contains(name+"\":null"))
+            return 0;
         if(json.contains(name+"\":")) {
             String find = json.split(name + "\":")[1];
             String result = find.split("\n")[0];
@@ -103,9 +162,39 @@ public class JsonParser {
             throw new JsonValueNotFoundException(name);
     }
     
+    public byte[] parseByteArray(String name) throws JsonValueNotFoundException {
+        if(json.contains(name+"\":")) {
+            String find = json.split(name + "\":\\[")[1].split("\\]")[0];
+            if(find.length()<=0)
+                return new byte[0];
+            String[] list = find.split(","); 
+            byte[] result = new byte[list.length];
+            for(int i = 0; i < list.length; i++)
+                result[i] = Byte.parseByte(list[i].trim());
+            return result;
+        } else
+            throw new JsonValueNotFoundException(name);
+    }
+    
+    public short[] parseShortArray(String name) throws JsonValueNotFoundException {
+        if(json.contains(name+"\":")) {
+            String find = json.split(name + "\":\\[")[1].split("\\]")[0];
+            if(find.length()<=0)
+                return new short[0];
+            String[] list = find.split(","); 
+            short[] result = new short[list.length];
+            for(int i = 0; i < list.length; i++)
+                result[i] = Short.parseShort(list[i].trim());
+            return result;
+        } else
+            throw new JsonValueNotFoundException(name);
+    }
+    
     public int[] parseIntegerArray(String name) throws JsonValueNotFoundException {
         if(json.contains(name+"\":")) {
             String find = json.split(name + "\":\\[")[1].split("\\]")[0];
+            if(find.length()<=0)
+                return new int[0];
             String[] list = find.split(","); 
             int[] result = new int[list.length];
             for(int i = 0; i < list.length; i++)
@@ -115,9 +204,25 @@ public class JsonParser {
             throw new JsonValueNotFoundException(name);
     }
     
+    public float[] parseFloatArray(String name) throws JsonValueNotFoundException {
+        if(json.contains(name+"\":")) {
+            String find = json.split(name + "\":\\[")[1].split("\\]")[0];
+            if(find.length()<=0)
+                return new float[0];
+            String[] list = find.split(","); 
+            float[] result = new float[list.length];
+            for(int i = 0; i < list.length; i++)
+                result[i] = Float.parseFloat(list[i].trim());
+            return result;
+        } else
+            throw new JsonValueNotFoundException(name);
+    }
+    
     public double[] parseDoubleArray(String name) throws JsonValueNotFoundException {
         if(json.contains(name+"\":")) {
             String find = json.split(name + "\":\\[")[1].split("\\]")[0];
+            if(find.length()<=0)
+                return new double[0];
             String[] list = find.split(","); 
             double[] result = new double[list.length];
             for(int i = 0; i < list.length; i++)
@@ -127,9 +232,30 @@ public class JsonParser {
             throw new JsonValueNotFoundException(name);
     }
     
-    public String[] parseStringArray(String name) throws JsonValueNotFoundException {
+    public long[] parseLongArray(String name) throws JsonValueNotFoundException {
         if(json.contains(name+"\":")) {
             String find = json.split(name + "\":\\[")[1].split("\\]")[0];
+            if(find.length()<=0)
+                return new long[0];
+            String[] list = find.split(","); 
+            long[] result = new long[list.length];
+            for(int i = 0; i < list.length; i++)
+                result[i] = Long.parseLong(list[i].trim());
+            return result;
+        } else
+            throw new JsonValueNotFoundException(name);
+    }
+    
+    public String[] parseStringArray(String name) throws JsonValueNotFoundException {
+        if(json.contains(name+"\":null"))
+            return null;
+        if(json.contains(name+"\":")) {
+            String[] content =json.split(name + "\":\\[")[1].split("\\]");
+            if(!(content.length > 0))
+                return new String[0];
+            String find = content[0];
+            if(find.length()<=0)
+                return new String[0];
             String[] list = find.split(","); 
             String[] result = new String[list.length];
             for(int i = 0; i < list.length; i++)
@@ -140,8 +266,12 @@ public class JsonParser {
     }
     
     public boolean[] parseBooleanArray(String name) throws JsonValueNotFoundException {
+        if(json.contains(name+"\":null"))
+            return null;
         if(json.contains(name+"\":")) {
             String find = json.split(name + "\":\\[")[1].split("\\]")[0];
+            if(find.length()<=0)
+                return new boolean[0];
             String[] list = find.split(","); 
             boolean[] result = new boolean[list.length];
             for(int i = 0; i < list.length; i++)
@@ -152,8 +282,12 @@ public class JsonParser {
     }
     
     public char[] parseCharacterArray(String name) throws JsonValueNotFoundException {
+        if(json.contains(name+"\":null"))
+            return null;
         if(json.contains(name+"\":")) {
             String find = json.split(name + "\":\\[")[1].split("\\]")[0];
+            if(find.length()<=0)
+                return new char[0];
             String[] list = find.split(","); 
             char[] result = new char[list.length];
             for(int i = 0; i < list.length; i++) 
@@ -164,6 +298,8 @@ public class JsonParser {
     }
     
     public JsonObject parseObject(String name) throws JsonValueNotFoundException {
+        if(json.contains(name+"\":null"))
+            return null;
         if(json.contains(name+"\":")) {
             JsonObject jo = new JsonObject(name);
             String jString = json.split("\""+name+"\":\\{\n")[1];
@@ -187,6 +323,8 @@ public class JsonParser {
     }
     
     public JsonObject[] parseObjectArray(String name) throws JsonValueNotFoundException {
+        if(json.contains(name+"\":null"))
+            return null;
         if(json.contains(name+"\":[")) {
             int arrayStart = json.indexOf(name + "\":[");
             int arrayEnd = json.indexOf("\n]", arrayStart);
