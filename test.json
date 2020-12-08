@@ -1,0 +1,38 @@
+{
+"company":"Numbers R Us",
+"owner":"John",
+"departments":["finance", "production", "sales", "manager"],
+"employee":{
+    "name":"Jim",
+    "age":26,
+    "manager":true,
+    "contact":{
+        "email":"jim@aol.com",
+        "phone":"222-222-2222"
+    }
+},
+"items":[
+    {
+        "type":"potion",
+        "duration":1243124323221132332,
+        "effect":"health"
+    },
+    {
+        "type":"potion",
+        "duration":20,
+        "effect":"poison"
+    },
+    {
+        "type":"sledgehammer",
+        "duration":30,
+        "effect":"death"
+    }
+],
+"customer":{
+    "firstName":"Charles",
+    "lastName":"Nibble",
+    "address":"Maryland",
+    "age":27,
+    "children":[]
+}
+}

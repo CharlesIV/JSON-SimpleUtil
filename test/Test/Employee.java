@@ -22,20 +22,40 @@ import com.reactnebula.simplejsonutil.*;
  *
  * @author Charles
  */
-public class CustomerExample implements Stringifiable {
+public class Employee implements Stringifiable {
     
-    String firstName;
-    String lastName;
-    String address;
-    int age;
-    String[] children;
+    private String firstName, lastName, address;
+    private char gender;
+    private int age;
+    private String[] children;
     
-    public CustomerExample(String firstName, String lastName, String address, int age, String... children) {
+    public Employee(String firstName, String lastName, char gender, String address, int age, String... children) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.gender = gender;
         this.address = address;
         this.age = age;
         this.children = children;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public int getAge() {
+        return age;
+    }
+    
+    public boolean hasChildren() {
+        return children.length > 0;
     }
     
     @Override
@@ -43,36 +63,23 @@ public class CustomerExample implements Stringifiable {
         JsonObject jo = new JsonObject("customer");
         jo.put("firstName", firstName);
         jo.put("lastName", lastName);
+        jo.put("gender", gender);
         jo.put("address", address);
         jo.put("age", age);
         jo.put("children", children);
         return jo;
     }
-
-    public static CustomerExample fromJson(JsonObject jo) throws IncompatibleJsonObjectException {
-        JsonParser jp = new JsonParser(jo);
-        try {
-            String firstName = jp.parseString("firstName");
-            String lastName = jp.parseString("lastName");
-            String address = jp.parseString("address");
-            int age = jp.parseInteger("age");
-            String[] children = jp.parseStringArray("children");
-            return new CustomerExample(firstName, lastName, address, age, children);
-        } catch (JsonValueNotFoundException ex) {
-            throw new IncompatibleJsonObjectException(ex.getMessage());
-        }
-    }
-    
     
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(firstName).append(" ");
-        sb.append(lastName).append(", ");
-        sb.append(address).append(", ");
-        sb.append(age).append(", ");
+    public boolean equals(Object o) {
+        if(!(o instanceof Employee))
+            return false;
+        Employee e = (Employee)o;
+        if(children.length != e.children.length)
+            return false;
         for(int i = 0; i < children.length; i++)
-            sb.append(children[i]).append(":");
-        return sb.toString();
+            if(!children[i].equals(e.children[i]))
+                return false;
+        return lastName.equals(e.lastName) && firstName.equals(e.firstName) && age == e.age && gender == e.gender && address.equals(e.address);
     }
 }

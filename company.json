@@ -1,0 +1,38 @@
+{
+"company":"Code R Us",
+"ceo":"John Brick",
+"employees":[
+    {
+    "firstName":"Bill",
+    "lastName":"Johnson",
+    "gender":"m",
+    "address":"Arizonia",
+    "age":23,
+    "children":[]
+    },
+    {
+    "firstName":"Deborah",
+    "lastName":"Johnson",
+    "gender":"f",
+    "address":"Arizonia",
+    "age":21,
+    "children":[]
+    },
+    {
+    "firstName":"John",
+    "lastName":"Wilson",
+    "gender":"m",
+    "address":"California",
+    "age":33,
+    "children":[]
+    },
+    {
+    "firstName":"Ethan",
+    "lastName":"Ballar",
+    "gender":"m",
+    "address":"South Carolina",
+    "age":42,
+    "children":[]
+    }
+]
+}

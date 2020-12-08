@@ -24,72 +24,38 @@ import java.io.IOException;
  * @author Charles
  */
 public class SimpleJsonUtil {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         JsonWriter writer = new JsonWriter();
+        EmployeeFactory factory = new EmployeeFactory();
+        Employee emp1 = factory.newCustomer("Bill", "Johnson", 'm', "Arizonia", 23);
+        Employee emp2 = factory.newCustomer("Deborah", "Johnson", 'f', "Arizonia", 21);
+        Employee emp3 = factory.newCustomer("John", "Wilson", 'm', "California", 33);
+        Employee emp4 = factory.newCustomer("Ethan", "Ballar", 'm', "South Carolina", 42);
         
-        writer.put("company", "Numbers R Us");
-        writer.put("owner", "John");
-        writer.put("departments", new String[]{"finance", "production", "sales", "manager"});
+        String company = "Code R Us";
+        String ceo = "John Brick";
+        writer.put("company", company);
+        writer.put("ceo", ceo);
         
-        JsonObject emp = writer.putObject("employee");
-            emp.put("name", "Jim");
-            emp.put("age", 26);
-            emp.put("manager", true);
-            JsonObject contact = emp.putObject("contact");
-                contact.put("email", "jim@aol.com");
-                contact.put("phone", "222-222-2222");
+        JsonObjectArray employees = writer.putObjectArray("employees");
+        employees.putObject(emp1.toJson());
+        employees.putObject(emp2.toJson());
+        employees.putObject(emp3.toJson());
+        employees.putObject(emp4.toJson());
         
-        JsonObjectArray joa = writer.putObjectArray("items");
-        JsonObject jo = joa.putObject();
-            jo.put("type", "prime");
-            jo.put("value", 3);
-            jo.put("even", false);
-        JsonObject jo2 = joa.putObject();
-            jo2.put("type", "negative");
-            jo2.put("duration", -2);
-            jo2.put("effect", true);
-        JsonObject jo3 = joa.putObject();
-            jo3.put("type", "real");
-            jo3.put("duration", 3.1);
-            jo3.put("effect", false);
+        writer.write("company.json"); //throws IOException
         
-        CustomerExample ce = new CustomerExample("Charles", "Nibble", "Maryland", 27);
-        JsonObject ceo = ce.toJson();
-        writer.putObject(ceo);
-        CustomerExample nce = null;
+        JsonParser parser = new JsonParser("company.json");
         try {
-            nce = ce.fromJson(ceo);
-        } catch (IncompatibleJsonObjectException ex) {}
-            
-        try {
-            writer.write("test.json");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        
-        try {
-            
-            System.out.println(nce);
-            
-            JsonParser parser = new JsonParser("test.json");
-            boolean manager = parser.parseBoolean("manager");
-            System.out.println(manager);
-            
-            JsonObject emp2 = parser.parseObject("employee");
-            JsonParser newParser = new JsonParser(emp2);
-            String name = newParser.parseString("name");
-            System.out.println(name);
-            
-            JsonObject contact2 = newParser.parseObject("contact");
-            newParser.setParser(contact2);
-            String email = newParser.parseString("email");
-            System.out.println(email);
-            
-            parser.parseObjectArray("items");
-        } catch(IOException e) {
-            e.printStackTrace();
-        } catch (JsonValueNotFoundException ex) {
-            ex.printStackTrace();
+            //Parsing for any value can throw a JsonValueNotFoundException
+            String pCompany = parser.parseString("company");
+            System.out.println(pCompany);
+            JsonObject[] pEmployees = parser.parseObjectArray("employees");
+            Employee pEmp1 = factory.fromJson(pEmployees[0]); //throws IncompatibleJsonObjectException
+            boolean match = emp1.equals(pEmp1);
+            System.out.println(match);
+        } catch (JsonValueNotFoundException | IncompatibleJsonObjectException ex) {
+            System.err.println(ex.getMessage());
         }
     }
 }
