@@ -11,7 +11,7 @@ public class JsonObject extends JsonValue {
     int startLength, lastPos, count;
     String indent = "    ";
     
-    HashMap<Integer, JsonObject> jObjects = new HashMap<>();
+    HashMap<Integer, JsonData> jObjects = new HashMap<>();
     
     public JsonObject(String name) {
         if(!name.equals(""))
@@ -20,6 +20,11 @@ public class JsonObject extends JsonValue {
         startLength = sb.length();
     }
     
+    //will implement at a later point
+//    public void putObject(JsonObject jo) {
+//        jObjects.put(jo.sb.length()+count++, jo);
+//    }
+    
     public JsonObject putObject(String name) {
         JsonObject jo = new JsonObject(name);
         jo.sb.insert(0, indent);
@@ -27,6 +32,14 @@ public class JsonObject extends JsonValue {
         jObjects.put(sb.length()+count++, jo);
         jo.startLength+=indent.length();
         return jo;
+    }
+    
+    public JsonObjectArray putObjectArray(String name) {
+        JsonObjectArray joa = new JsonObjectArray(name);
+        joa.sb.insert(0, indent);
+        joa.indent = indent + "    ";
+        jObjects.put(sb.length()+count++, joa);
+        return joa;
     }
     
     @Override
@@ -45,7 +58,7 @@ public class JsonObject extends JsonValue {
      */
     public JsonObject copyOf() {
         JsonObject jo = new JsonObject("");
-        HashMap<Integer, JsonObject> map = new HashMap<>();
+        HashMap<Integer, JsonData> map = new HashMap<>();
         map.putAll(jObjects);
         jo.startLength = startLength;
         jo.lastPos = lastPos;

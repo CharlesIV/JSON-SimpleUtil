@@ -52,7 +52,7 @@ public class JsonObjectArray extends JsonData {
         jObjects.forEach(jo -> {
             if(jo == jObjects.get(jObjects.size()-1)) 
                 sb.append(jo.writeLast());
-                 else
+            else
                 sb.append(jo.write());
         });
         sb.append("]\n");
