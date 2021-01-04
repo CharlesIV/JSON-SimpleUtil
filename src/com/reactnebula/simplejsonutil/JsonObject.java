@@ -20,10 +20,10 @@ public class JsonObject extends JsonValue {
         startLength = sb.length();
     }
     
-    //will implement at a later point
-//    public void putObject(JsonObject jo) {
-//        jObjects.put(jo.sb.length()+count++, jo);
-//    }
+    public void putObject(JsonObject jo) {
+        jObjects.put(sb.length()+count++, jo);
+        jo.indent = indent + "    ";
+    }
     
     public JsonObject putObject(String name) {
         JsonObject jo = new JsonObject(name);
