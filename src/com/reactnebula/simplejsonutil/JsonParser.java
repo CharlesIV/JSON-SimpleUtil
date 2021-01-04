@@ -212,7 +212,7 @@ public class JsonParser {
     
     public byte[] parseByteArray(String name) throws JsonValueNotFoundException {
         String value = parseStringedValue(name, ARRAY_SEPERATOR);
-        if(value.equals("null"))
+        if(value.equals("null")||value.equals("]"))
             return new byte[0];
         String[] array = value.replace("]", "").trim().split(",");
         byte[] result = new byte[array.length];
@@ -223,7 +223,7 @@ public class JsonParser {
     
     public short[] parseShortArray(String name) throws JsonValueNotFoundException {
         String value = parseStringedValue(name, ARRAY_SEPERATOR);
-        if(value.equals("null"))
+        if(value.equals("null")||value.equals("]"))
             return new short[0];
         String[] array = value.replace("]", "").trim().split(",");
         short[] result = new short[array.length];
@@ -234,7 +234,7 @@ public class JsonParser {
     
     public int[] parseIntegerArray(String name) throws JsonValueNotFoundException {
         String value = parseStringedValue(name, ARRAY_SEPERATOR);
-        if(value.equals("null"))
+        if(value.equals("null")||value.equals("]"))
             return new int[0];
         String[] array = value.replace("]", "").trim().split(",");
         int[] result = new int[array.length];
@@ -245,7 +245,7 @@ public class JsonParser {
     
     public float[] parseFloatArray(String name) throws JsonValueNotFoundException {
         String value = parseStringedValue(name, ARRAY_SEPERATOR);
-        if(value.equals("null"))
+        if(value.equals("null")||value.equals("]"))
             return new float[0];
         String[] array = value.replace("]", "").trim().split(",");
         float[] result = new float[array.length];
@@ -256,7 +256,7 @@ public class JsonParser {
     
     public double[] parseDoubleArray(String name) throws JsonValueNotFoundException {
         String value = parseStringedValue(name, ARRAY_SEPERATOR);
-        if(value.equals("null"))
+        if(value.equals("null")||value.equals("]"))
             return new double[0];
         String[] array = value.replace("]", "").trim().split(",");
         double[] result = new double[array.length];
@@ -267,7 +267,7 @@ public class JsonParser {
     
     public long[] parseLongArray(String name) throws JsonValueNotFoundException {
         String value = parseStringedValue(name, ARRAY_SEPERATOR);
-        if(value.equals("null"))
+        if(value.equals("null")||value.equals("]"))
             return new long[0];
         String[] array = value.replace("]", "").trim().split(",");
         long[] result = new long[array.length];
@@ -278,14 +278,14 @@ public class JsonParser {
     
     public String[] parseStringArray(String name) throws JsonValueNotFoundException {
         String value = parseStringedValue(name, ARRAY_SEPERATOR);
-        if(value.equals("null"))
+        if(value.equals("null")||value.equals("]"))
             return new String[0];
         return value.replace("]", "").replace("\n", "").replace("\",", "%%").replace("\"", "").trim().split("%%");
     }
     
     public boolean[] parseBooleanArray(String name) throws JsonValueNotFoundException {
         String value = parseStringedValue(name, ARRAY_SEPERATOR);
-        if(value.equals("null"))
+        if(value.equals("null")||value.equals("]"))
             return new boolean[0];
         String[] array = value.replace("]", "").trim().split(",");
         boolean[] result = new boolean[array.length];
@@ -296,7 +296,7 @@ public class JsonParser {
     
     public char[] parseCharacterArray(String name) throws JsonValueNotFoundException {
         String value = parseStringedValue(name, ARRAY_SEPERATOR);
-        if(value.equals("null"))
+        if(value.equals("null")||value.equals("]"))
             return new char[0];
         String[] array = value.replace("]", "").replace("\n", "").replace("\",", "%%").replace("\"", "").split("%%");
         char[] result = new char[array.length];
@@ -317,6 +317,8 @@ public class JsonParser {
     
     public JsonObject[] parseObjectArray(String name) throws JsonValueNotFoundException {
         String array = parseStringedValue(name, ARRAY_SEPERATOR);
+        if(array.trim().equals("]"))
+            return new JsonObject[0];
         String[] objects = array.split("},");
         JsonObject[] jObjects = new JsonObject[objects.length];
         for(int i = 0; i < objects.length; i++) {
