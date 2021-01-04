@@ -27,15 +27,33 @@ public class SimpleJsonUtil {
     public static void main(String[] args) throws IOException {
         JsonWriter writer = new JsonWriter();
         EmployeeFactory factory = new EmployeeFactory();
-        Employee emp1 = factory.newCustomer("Bill", "Johnson", 'm', "Arizonia", 23);
-        Employee emp2 = factory.newCustomer("Deborah", "Johnson", 'f', "Arizonia", 21);
-        Employee emp3 = factory.newCustomer("John", "Wilson", 'm', "California", 33);
-        Employee emp4 = factory.newCustomer("Ethan", "Ballar", 'm', "South Carolina", 42);
+        Employee emp1 = factory.newEmployee("Bill", "Johnson", 'm', "Arizonia", 23, "Jim", "Catherine");
+        Employee emp2 = factory.newEmployee("Deborah", "Johnson", 'f', "Arizonia", 21);
+        Employee emp3 = factory.newEmployee("John", "Wilson", 'm', "California", 33);
+        Employee emp4 = factory.newEmployee("Ethan", "Ballar", 'm', "South Carolina", 42);
         
         String company = "Code R Us";
         String ceo = "John Brick";
         writer.put("company", company);
         writer.put("ceo", ceo);
+        JsonObject building = writer.putObject("building");
+        building.put("address", "8213 W 1223 N, Legit, Arizonia");
+        building.put("security", true);
+        
+        JsonObjectArray products = writer.putObjectArray("products");
+            JsonObject pr1 = products.putObject();
+                pr1.put("name", "3D Games");
+                pr1.put("description", "Amazing never seen games.");
+            JsonObject pr2 = products.putObject();
+                pr2.put("name", "JsonUtil");
+                pr2.put("description", "A hopefully good utility.");
+                JsonObjectArray packages = pr2.putObjectArray("packages");
+                    JsonObject pa1 = packages.putObject();
+                        pa1.put("title", "beginner");
+                        pa1.put("price", 20);
+                    JsonObject pa2 = packages.putObject();
+                        pa2.put("title", "intermediate");
+                        pa2.put("price", 40);
         
         JsonObjectArray employees = writer.putObjectArray("employees");
         employees.putObject(emp1.toJson());
@@ -50,10 +68,18 @@ public class SimpleJsonUtil {
             //Parsing for any value can throw a JsonValueNotFoundException
             String pCompany = parser.parseString("company");
             System.out.println(pCompany);
+            
             JsonObject[] pEmployees = parser.parseObjectArray("employees");
             Employee pEmp1 = factory.fromJson(pEmployees[0]); //throws IncompatibleJsonObjectException
+            
+            String[] keys = new JsonParser(pEmployees[0]).parseStringArray("children");
+            for(String s : keys)
+                System.out.print(s+",");
+            System.out.println();
+            
             boolean match = emp1.equals(pEmp1);
             System.out.println(match);
+            
         } catch (JsonValueNotFoundException | IncompatibleJsonObjectException ex) {
             System.err.println(ex.getMessage());
         }

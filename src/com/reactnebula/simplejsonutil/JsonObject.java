@@ -60,12 +60,13 @@ public class JsonObject extends JsonValue {
         JsonObject jo = new JsonObject("");
         HashMap<Integer, JsonData> map = new HashMap<>();
         map.putAll(jObjects);
+        jo.sb = new StringBuilder();
         jo.startLength = startLength;
         jo.lastPos = lastPos;
         jo.count = count;
         jo.indent = indent;
         jo.jObjects = map;
-        jo.sb = sb;
+        jo.sb.append(sb);
         return jo;
     }
     

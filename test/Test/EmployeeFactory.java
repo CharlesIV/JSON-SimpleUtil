@@ -28,7 +28,7 @@ import com.reactnebula.simplejsonutil.ObjectFactory;
  */
 public class EmployeeFactory implements ObjectFactory {
     
-    public Employee newCustomer(String firstName, String lastName, char gender, String address, int age, String... children) {
+    public Employee newEmployee(String firstName, String lastName, char gender, String address, int age, String... children) {
         return new Employee(firstName, lastName, gender, address, age, children);
     }
     
