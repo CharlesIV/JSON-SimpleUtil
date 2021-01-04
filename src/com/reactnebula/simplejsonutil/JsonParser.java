@@ -298,10 +298,10 @@ public class JsonParser {
         String value = parseStringedValue(name, ARRAY_SEPERATOR);
         if(value.equals("null"))
             return new char[0];
-        String[] array = value.replace("]", "").replace("\n", "").replace("\",", "%%").replace("\"", "").trim().split("%%");
+        String[] array = value.replace("]", "").replace("\n", "").replace("\",", "%%").replace("\"", "").split("%%");
         char[] result = new char[array.length];
         for(int i = 0; i < array.length; i++)
-            result[i] = array[i].charAt(0);
+            result[i] = array[i].trim().charAt(0);
         return result;
     }
     
