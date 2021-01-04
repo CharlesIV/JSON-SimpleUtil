@@ -316,22 +316,15 @@ public class JsonParser {
     }
     
     public JsonObject[] parseObjectArray(String name) throws JsonValueNotFoundException {
-        if(json.contains(name+"\":null"))
-            return null;
-        if(json.contains(name+ARRAY_SEPERATOR)) {
-            int arrayStart = json.indexOf(name + ARRAY_SEPERATOR);
-            int arrayEnd = json.indexOf("\n]", arrayStart);
-            String array = json.substring(arrayStart+name.length()+4, arrayEnd);
-            String[] objects = array.split("},");
-            JsonObject[] jObjects = new JsonObject[objects.length];
-            for(int i = 0; i < objects.length; i++) {
-                JsonObject temp = new JsonObject("temp");
-                temp.sb.delete(0, temp.sb.length());
-                temp.sb.append(objects[i]);
-                jObjects[i] = temp;
-            }
-            return jObjects;
-        } else
-            throw new JsonValueNotFoundException(name);
+        String array = parseStringedValue(name, ARRAY_SEPERATOR);
+        String[] objects = array.split("},");
+        JsonObject[] jObjects = new JsonObject[objects.length];
+        for(int i = 0; i < objects.length; i++) {
+            JsonObject temp = new JsonObject("temp");
+            temp.sb.delete(0, temp.sb.length());
+            temp.sb.append(objects[i].trim());
+            jObjects[i] = temp;
+        }
+        return jObjects;
     }
 }
