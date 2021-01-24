@@ -13,6 +13,7 @@ import java.util.HashMap;
 public class JsonParser {
     private final String SEPERATOR = "\":";
     private final String ARRAY_SEPERATOR = "\":[";
+    private final String VALUE_BREAK = "\n\t";
     
     String json;
     private HashMap<Integer, Integer> depthMap;
@@ -119,21 +120,19 @@ public class JsonParser {
         for(int i = 0; i < path.length; i++) {
             dep = i+1;
             index = getIndexOfValue(path[i], dep);
-            if(index==-1)
-                throw new JsonValueNotFoundException(name);
-            if(lastIndex > index)
+            if(index==-1 || lastIndex > index)
                 throw new JsonValueNotFoundException(name);
             lastIndex = index;
         }
         
         String result = json.substring(index);
-        int comma = index;
-        while((comma = json.indexOf(',', comma+1)) != -1) {
-            if(findDepth(comma)==dep)
+        int newBreak = index;
+        while((newBreak = json.indexOf(VALUE_BREAK, newBreak+1)) != -1) {
+            if(findDepth(newBreak)==dep)
                 break;
         }
-        if(comma != -1)
-            result = result.substring(0, comma-index);
+        if(newBreak != -1)
+            result = result.substring(0, newBreak-index);
         else {
             int ending = result.length()-1;
             for(int i = result.length(); i > 0; i--) {
@@ -144,7 +143,13 @@ public class JsonParser {
             }
             result = result.substring(0, ending).trim();
         }
-        return result.replace(path[dep-1]+seperator, "");
+        StringBuilder value = new StringBuilder();
+        value.append(result.replace(path[dep-1]+seperator, ""));
+        
+        if(value.charAt(value.length()-1)==',')
+            value.deleteCharAt(value.length()-1);
+        
+        return value.toString();
     }
     
     public byte parseByte(String name) throws JsonValueNotFoundException {

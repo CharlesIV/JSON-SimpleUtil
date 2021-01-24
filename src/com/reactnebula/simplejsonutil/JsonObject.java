@@ -24,6 +24,8 @@ public class JsonObject extends JsonValue {
             sb.append(",\n");
         jIndex.add(sb.length());
         jo.sb.insert(0, indent);
+        for(int i = 0; i < jo.jIndex.size();i++)
+            jo.jIndex.set(i, jo.jIndex.get(i)+indent.length()+2);
         jo.indent += indent;
         insertIndent(jo, indent);
     }
@@ -49,8 +51,6 @@ public class JsonObject extends JsonValue {
     
     public JsonObject putObject(String name) {
         JsonObject jo = new JsonObject(name);
-        if(sb.charAt(sb.length()-2)!=',')
-            sb.append(",\n");
         jo.sb.insert(0, indent);
         jo.indent += indent;
         jObjects.add(jo);
@@ -106,8 +106,9 @@ public class JsonObject extends JsonValue {
             written.insert(jIndex.get(i)+posOffset, object);
             posOffset+=object.length();
         }
+        if(!written.toString().replace('{', ' ').isBlank())
+            written.deleteCharAt(written.length()-2);
         
-        written.deleteCharAt(written.length()-2);
         written.append(indent).append("},\n");
         return written.toString();
     }

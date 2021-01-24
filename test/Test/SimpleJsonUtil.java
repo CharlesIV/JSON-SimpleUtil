@@ -66,16 +66,14 @@ public class SimpleJsonUtil {
         JsonParser parser = new JsonParser("company.json");
         try {
             //Parsing for any value can throw a JsonValueNotFoundException
-            String pCompany = parser.parseString("company");
-            System.out.println(pCompany);
+            String address = parser.parseString("building.security");
+            System.out.println(address);
             
             JsonObject[] pEmployees = parser.parseObjectArray("employees");
             Employee pEmp1 = factory.fromJson(pEmployees[0]); //throws IncompatibleJsonObjectException
             
-            String[] keys = new JsonParser(pEmployees[0]).parseStringArray("children");
-            for(String s : keys)
-                System.out.print(s+",");
-            System.out.println();
+            String[] children = new JsonParser(pEmployees[2]).parseStringArray("children");
+            System.out.println(children.length);
             
             boolean match = emp1.equals(pEmp1);
             System.out.println(match);
