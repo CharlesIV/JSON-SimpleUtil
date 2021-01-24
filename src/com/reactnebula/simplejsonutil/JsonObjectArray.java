@@ -30,6 +30,10 @@ public class JsonObjectArray extends JsonData {
         jo.sb.replace(0, beginning, "");
         jo.sb.insert(0, indent);
         jo.indent=indent;
+        
+        for(int i = 0; i < jo.jIndex.size(); i++)
+            jo.jIndex.set(i, jo.jIndex.get(i)-(beginning-1));
+        
         jo.insertIndent(jo, indent.substring(0, indent.length()-1));
         jObjects.add(jo);
     }
