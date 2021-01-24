@@ -1,6 +1,6 @@
 package com.reactnebula.simplejsonutil;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  *
@@ -8,44 +8,67 @@ import java.util.HashMap;
  */
 public class JsonObject extends JsonValue {
     
-    int startLength, lastPos, count;
-    String indent = "    ";
-    
-    HashMap<Integer, JsonData> jObjects = new HashMap<>();
+    ArrayList<JsonData> jObjects = new ArrayList<>();
+    ArrayList<Integer> jIndex = new ArrayList<>();
     
     public JsonObject(String name) {
         if(!name.equals(""))
-            sb.append('"').append(name).append('"').append(":");
+            sb.append(TAB).append('"').append(name).append('"').append(":");
         sb.append("{\n");
-        startLength = sb.length();
+        indent = TAB;
     }
     
     public void putObject(JsonObject jo) {
-        jObjects.put(sb.length()+count++, jo);
-        jo.indent = indent + "    ";
+        jObjects.add(jo);
+        if(sb.charAt(sb.length()-2)!=',')
+            sb.append(",\n");
+        jIndex.add(sb.length());
+        jo.sb.insert(0, indent);
+        jo.indent += indent;
+        insertIndent(jo, indent);
+    }
+    
+    public static void insertIndent(JsonObject jo, String indent) {
+        String object = jo.sb.toString();
+        int index = object.indexOf("\n", 1);
+        int count = 0;
+        while(index!=-1) {
+            int nextIndex = object.indexOf("\n", index+1);
+            if(nextIndex==-1)
+                return;
+            jo.sb.insert(index+count+2, indent);
+            count++;
+            for(int i = 0; i < jo.jIndex.size(); i++) {
+                int jIndex = jo.jIndex.get(i);
+                if(jIndex <= index)
+                    jo.jIndex.set(i, jIndex+indent.length());
+            }
+            index = nextIndex;
+        }
     }
     
     public JsonObject putObject(String name) {
         JsonObject jo = new JsonObject(name);
+        if(sb.charAt(sb.length()-2)!=',')
+            sb.append(",\n");
         jo.sb.insert(0, indent);
-        jo.indent = indent + "    ";
-        jObjects.put(sb.length()+count++, jo);
-        jo.startLength+=indent.length();
+        jo.indent += indent;
+        jObjects.add(jo);
+        jIndex.add(sb.length());
         return jo;
     }
     
     public JsonObjectArray putObjectArray(String name) {
         JsonObjectArray joa = new JsonObjectArray(name);
         joa.sb.insert(0, indent);
-        joa.indent = indent + "    ";
-        jObjects.put(sb.length()+count++, joa);
+        joa.indent += indent;
+        jObjects.add(joa);
+        jIndex.add(sb.length());
         return joa;
     }
     
     @Override
     protected void appendBeginning(String name) {
-        if(sb.length() > startLength)
-            super.appendEnding();
         sb.append(indent);
         super.appendBeginning(name);
     }
@@ -58,41 +81,34 @@ public class JsonObject extends JsonValue {
      */
     public JsonObject copyOf() {
         JsonObject jo = new JsonObject("");
-        HashMap<Integer, JsonData> map = new HashMap<>();
-        map.putAll(jObjects);
+        jo.jObjects.addAll(jObjects);
+        jo.jIndex.addAll(jIndex);
         jo.sb = new StringBuilder();
-        jo.startLength = startLength;
-        jo.lastPos = lastPos;
-        jo.count = count;
         jo.indent = indent;
-        jo.jObjects = map;
         jo.sb.append(sb);
         return jo;
     }
     
     @Override
     String writeLast() {
-        write();
-        sb.deleteCharAt(sb.length()-2);
-        return sb.toString();
+        String written = write();
+        return written.substring(0, written.length()-2).concat("\n");
     }
     
     @Override
     String write() {
-        sb.append("\n").append(indent.substring(4, indent.length())).append("},\n");
-        lastPos = 0;
-        jObjects.forEach((i, jo) -> {
-            int ii = i + lastPos--;
-            if(sb.charAt(ii)!=',')
-                sb.insert(ii, ",");
-            sb.insert(ii+2, jo.write());
-            if(sb.charAt(ii+jo.sb.length()+indent.length()-2) == '}') 
-                sb.deleteCharAt(ii+jo.sb.length());
-            lastPos += jo.sb.length();
-        });
-        return sb.toString();
+        StringBuilder written = new StringBuilder();
+        written.append(sb);
+        
+        int posOffset = 0;
+        for(int i = 0; i < jObjects.size(); i++) {
+            String object = jObjects.get(i).write();
+            written.insert(jIndex.get(i)+posOffset, object);
+            posOffset+=object.length();
+        }
+        
+        written.deleteCharAt(written.length()-2);
+        written.append(indent).append("},\n");
+        return written.toString();
     }
-    
-    @Override
-    protected void appendEnding() {};
 }

@@ -9,9 +9,9 @@ import java.util.ArrayList;
 public class JsonObjectArray extends JsonData {
     
     ArrayList<JsonObject> jObjects = new ArrayList<>();
-    String indent = "    ";
     
     JsonObjectArray(String name) {
+        sb.append(indent);
         sb.append('"').append(name).append('"');
         sb.append(":");
         sb.append("[\n");
@@ -20,8 +20,7 @@ public class JsonObjectArray extends JsonData {
     public JsonObject putObject() {
         JsonObject jo = new JsonObject("");
         jo.sb.insert(0, indent);
-        jo.startLength+=indent.length();
-        jo.indent+=indent;
+        jo.indent=indent;
         jObjects.add(jo);
         return jo;
     }
@@ -30,8 +29,8 @@ public class JsonObjectArray extends JsonData {
         int beginning = jo.sb.indexOf("{");
         jo.sb.replace(0, beginning, "");
         jo.sb.insert(0, indent);
-        jo.startLength+=indent.length();
-        jo.indent+=indent;
+        jo.indent=indent;
+        jo.insertIndent(jo, indent.substring(0, indent.length()-1));
         jObjects.add(jo);
     }
     
@@ -43,7 +42,7 @@ public class JsonObjectArray extends JsonData {
             else
                 sb.append(jo.write());
         });
-        sb.append("],\n");
+        sb.append(indent).append("],\n");
         return sb.toString();
     }
     
@@ -55,7 +54,7 @@ public class JsonObjectArray extends JsonData {
             else
                 sb.append(jo.write());
         });
-        sb.append("]\n");
+        sb.append(indent).append("]\n");
         return sb.toString();
     }
 }

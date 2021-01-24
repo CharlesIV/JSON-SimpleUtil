@@ -186,6 +186,7 @@ class JsonValue extends JsonData {
     }
     
     protected void appendBeginning(String name) {
+        sb.append(TAB);
         sb.append('"').append(name).append('"');
         sb.append(":");
     }
