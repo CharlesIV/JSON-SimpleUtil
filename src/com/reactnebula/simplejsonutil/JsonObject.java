@@ -23,26 +23,30 @@ public class JsonObject extends JsonValue {
         if(sb.charAt(sb.length()-2)!=',')
             sb.append(",\n");
         jIndex.add(sb.length());
-        jo.sb.insert(0, indent);
+        jo.sb.insert(0, indent+TAB);
         for(int i = 0; i < jo.jIndex.size();i++)
-            jo.jIndex.set(i, jo.jIndex.get(i)+indent.length()+2);
-        jo.indent += indent;
+            jo.jIndex.set(i, jo.jIndex.get(i)+indent.length()+1);
+        jo.indent = indent+TAB;
         insertIndent(jo, indent);
     }
     
     public static void insertIndent(JsonObject jo, String indent) {
+        if(indent.length()==0)
+            return;
         String object = jo.sb.toString();
         int index = object.indexOf("\n", 1);
-        int count = 0;
+        int count = 1;
         while(index!=-1) {
             int nextIndex = object.indexOf("\n", index+1);
             if(nextIndex==-1)
                 return;
-            jo.sb.insert(index+count+2, indent);
+            
+            jo.sb.insert(index+count*indent.length(), indent);
             count++;
+            
             for(int i = 0; i < jo.jIndex.size(); i++) {
                 int jIndex = jo.jIndex.get(i);
-                if(jIndex <= index)
+                if(jIndex > index)
                     jo.jIndex.set(i, jIndex+indent.length());
             }
             index = nextIndex;
@@ -61,7 +65,7 @@ public class JsonObject extends JsonValue {
     public JsonObjectArray putObjectArray(String name) {
         JsonObjectArray joa = new JsonObjectArray(name);
         joa.sb.insert(0, indent);
-        joa.indent += indent;
+        joa.indent = indent+TAB;
         jObjects.add(joa);
         jIndex.add(sb.length());
         return joa;
@@ -106,7 +110,8 @@ public class JsonObject extends JsonValue {
             written.insert(jIndex.get(i)+posOffset, object);
             posOffset+=object.length();
         }
-        if(!written.toString().replace('{', ' ').isBlank())
+        int index = written.indexOf("{");
+        if(!written.toString().substring(index).replace('{', ' ').isBlank())
             written.deleteCharAt(written.length()-2);
         
         written.append(indent).append("},\n");
