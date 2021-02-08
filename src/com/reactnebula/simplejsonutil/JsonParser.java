@@ -119,7 +119,7 @@ public class JsonParser {
         int dep = 0;
         for(int i = 0; i < path.length; i++) {
             dep = i+1;
-            index = getIndexOfValue(path[i], dep);
+            index = getIndexOfValue(path[i]+seperator, dep);
             if(index==-1 || lastIndex > index)
                 throw new JsonValueNotFoundException(name);
             lastIndex = index;
@@ -219,10 +219,10 @@ public class JsonParser {
         String value = parseStringedValue(name, ARRAY_SEPERATOR);
         if(value.equals("null")||value.equals("]"))
             return new byte[0];
-        String[] array = value.replace("]", "").trim().split(",");
+        String[] array = value.replace("]", "").split(",");
         byte[] result = new byte[array.length];
         for(int i = 0; i < array.length; i++)
-            result[i] = Byte.parseByte(array[i]);
+            result[i] = Byte.parseByte(array[i].trim());
         return result;
     }
     
@@ -230,10 +230,10 @@ public class JsonParser {
         String value = parseStringedValue(name, ARRAY_SEPERATOR);
         if(value.equals("null")||value.equals("]"))
             return new short[0];
-        String[] array = value.replace("]", "").trim().split(",");
+        String[] array = value.replace("]", "").split(",");
         short[] result = new short[array.length];
         for(int i = 0; i < array.length; i++)
-            result[i] = Short.parseShort(array[i]);
+            result[i] = Short.parseShort(array[i].trim());
         return result;
     }
     
@@ -241,10 +241,10 @@ public class JsonParser {
         String value = parseStringedValue(name, ARRAY_SEPERATOR);
         if(value.equals("null")||value.equals("]"))
             return new int[0];
-        String[] array = value.replace("]", "").trim().split(",");
+        String[] array = value.replace("]", "").split(",");
         int[] result = new int[array.length];
         for(int i = 0; i < array.length; i++)
-            result[i] = Integer.parseInt(array[i]);
+            result[i] = Integer.parseInt(array[i].trim());
         return result;
     }
     
@@ -252,10 +252,10 @@ public class JsonParser {
         String value = parseStringedValue(name, ARRAY_SEPERATOR);
         if(value.equals("null")||value.equals("]"))
             return new float[0];
-        String[] array = value.replace("]", "").trim().split(",");
+        String[] array = value.replace("]", "").split(",");
         float[] result = new float[array.length];
         for(int i = 0; i < array.length; i++)
-            result[i] = Float.parseFloat(array[i]);
+            result[i] = Float.parseFloat(array[i].trim());
         return result;
     }
     
@@ -263,10 +263,10 @@ public class JsonParser {
         String value = parseStringedValue(name, ARRAY_SEPERATOR);
         if(value.equals("null")||value.equals("]"))
             return new double[0];
-        String[] array = value.replace("]", "").trim().split(",");
+        String[] array = value.replace("]", "").split(",");
         double[] result = new double[array.length];
         for(int i = 0; i < array.length; i++)
-            result[i] = Double.parseDouble(array[i]);
+            result[i] = Double.parseDouble(array[i].trim());
         return result;
     }
     
@@ -274,10 +274,10 @@ public class JsonParser {
         String value = parseStringedValue(name, ARRAY_SEPERATOR);
         if(value.equals("null")||value.equals("]"))
             return new long[0];
-        String[] array = value.replace("]", "").trim().split(",");
+        String[] array = value.replace("]", "").split(",");
         long[] result = new long[array.length];
         for(int i = 0; i < array.length; i++)
-            result[i] = Long.parseLong(array[i]);
+            result[i] = Long.parseLong(array[i].trim());
         return result;
     }
     
@@ -292,10 +292,10 @@ public class JsonParser {
         String value = parseStringedValue(name, ARRAY_SEPERATOR);
         if(value.equals("null")||value.equals("]"))
             return new boolean[0];
-        String[] array = value.replace("]", "").trim().split(",");
+        String[] array = value.replace("]", "").split(",");
         boolean[] result = new boolean[array.length];
         for(int i = 0; i < array.length; i++)
-            result[i] = Boolean.parseBoolean(array[i]);
+            result[i] = Boolean.parseBoolean(array[i].trim());
         return result;
     }
     
