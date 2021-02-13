@@ -19,13 +19,23 @@ public class JsonParser {
     private HashMap<Integer, Integer> depthMap;
     private int index, depth, greatestIndex;
     
+    /**
+     * Used for creating an internal parser for reading ObjectArrays
+     */
+    private JsonParser() {}
+    
+    /**
+     * Takes a file path and reads the data in as a String.
+     * @param file the path to the file
+     * @throws IOException 
+     */
     public JsonParser(String file) throws IOException {
         json = new String(Files.readAllBytes(Paths.get(file)));
         init();
     }
     
     /**
-     * Takes the JsonObject and copies it's data internally,
+     * Takes the JsonObject and copies its data internally,
      * discarding the JsonObject. Any changes to the object after the
      * parser is created will not appear in the parser.
      * @param jo 
@@ -35,6 +45,9 @@ public class JsonParser {
         init();
     }
     
+    /**
+     * Creates a depth map used to determine the end of objects and arrays
+     */
     private void init() {
         depthMap = new HashMap<>();
         int currentDepth = 0;
@@ -50,24 +63,26 @@ public class JsonParser {
         }
     }
     
-    public void setParser(String file) throws IOException {
+    public JsonParser setParser(String file) throws IOException {
         json = new String(Files.readAllBytes(Paths.get(file)));
         init();
+        return this;
     }
     
     /**
-     * Takes the JsonObject and copies it's data internally,
+     * Takes the JsonObject and copies its data internally,
      * discarding the JsonObject. Any changes to the object after the
      * parser is set will not appear in the parser.
      * @param jo 
      */
-    public void setParser(JsonObject jo) {
+    public JsonParser setParser(JsonObject jo) {
         json = jo.sb.toString() + "\n}";
         init();
+        return this;
     }
     
-    private int getIndexOfValue(String key, int depth) {
-        index = 0;
+    private int getIndexOfValue(String key, int depth, int startIndex) {
+        index = startIndex-1;
         int depthTest = 0;
         while((index = json.indexOf(key, index+1)) != -1) {
             depthTest = findDepth(index);
@@ -107,7 +122,12 @@ public class JsonParser {
         System.arraycopy(valid.toArray(), 0, result, 0, result.length);
         return result;
     }
-    
+    /**
+     * Returns any value as a String. This is includes Objects and ObjectArrays
+     * @param name
+     * @return the value associated with the name parameter as a String
+     * @throws JsonValueNotFoundException 
+     */
     public String parseStringedValue(String name) throws JsonValueNotFoundException {
         return parseStringedValue(name, SEPERATOR);
     }
@@ -119,8 +139,12 @@ public class JsonParser {
         int dep = 0;
         for(int i = 0; i < path.length; i++) {
             dep = i+1;
-            index = getIndexOfValue(path[i]+seperator, dep);
-            if(index==-1 || lastIndex > index)
+            int startIndex = 0;
+            do {
+                index = getIndexOfValue("\""+path[i]+(i+1==path.length ? seperator : SEPERATOR), dep, startIndex);
+                startIndex = index+1;
+            } while(lastIndex > index && index != -1);
+            if(index==-1)
                 throw new JsonValueNotFoundException(name);
             lastIndex = index;
         }
@@ -144,7 +168,7 @@ public class JsonParser {
             result = result.substring(0, ending).trim();
         }
         StringBuilder value = new StringBuilder();
-        value.append(result.replace(path[dep-1]+seperator, ""));
+        value.append(result.replace("\""+path[dep-1]+seperator, ""));
         
         if(value.charAt(value.length()-1)==',')
             value.deleteCharAt(value.length()-1);
@@ -324,13 +348,29 @@ public class JsonParser {
         String array = parseStringedValue(name, ARRAY_SEPERATOR);
         if(array.trim().equals("]"))
             return new JsonObject[0];
-        String[] objects = array.split("},");
-        JsonObject[] jObjects = new JsonObject[objects.length];
-        for(int i = 0; i < objects.length; i++) {
+        
+        int objectIndex = -1;
+        ArrayList<Integer> indexes = new ArrayList<>();
+        
+        JsonParser parser = new JsonParser();
+        parser.json = "["+array;
+        parser.init();
+        
+        do {
+            objectIndex = parser.getIndexOfValue("},", 1, objectIndex+1);
+            if(objectIndex != -1)
+                indexes.add(objectIndex);
+        } while (objectIndex != -1);
+        indexes.add(array.length());
+        
+        JsonObject[] jObjects = new JsonObject[indexes.size()];
+        int lastIndex = 0;
+        for(int i = 0; i < indexes.size(); i++) {
             JsonObject temp = new JsonObject("temp");
             temp.sb.delete(0, temp.sb.length());
-            temp.sb.append(objects[i].trim());
+            temp.sb.append(array.subSequence(lastIndex, indexes.get(i)));
             jObjects[i] = temp;
+            lastIndex = indexes.get(i);
         }
         return jObjects;
     }
