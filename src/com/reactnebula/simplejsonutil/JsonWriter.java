@@ -142,6 +142,20 @@ public class JsonWriter {
         data.add(jd);
     }
     
+    /**
+     * Used to insert a generic type. Generic type must be either a primitive wrapper or String.
+     * 
+     * @param name
+     * @param obj a generic object which can be cast to a primitive wrapper or String. Null is not supported.
+     * @throws PrimitiveWrapperException when obj cannot be cast to a primitive wrapper or String
+     */
+    public void putGenericPrimitive(String name, Object obj) throws PrimitiveWrapperException {
+        JsonValue jd = new JsonValue();
+        jd.putGenericPrimitive(name, obj);
+        if(!jd.sb.isEmpty())
+            data.add(jd);
+    }
+    
     public void reset() {
         data.clear();
     }
@@ -161,6 +175,20 @@ public class JsonWriter {
         return jw;
     }
     
+    /**
+     * 
+     * @return JsonParser object with a copy of the writer's data.
+     */
+    public JsonParser toJsonParser() {
+        JsonParser jp = new JsonParser();
+        write(jp);
+        return jp;
+    }
+    
+    /**
+     * 
+     * @param jp the JsonParser to write the data to. Does not reset the writer after writing.
+     */
     public void write(JsonParser jp) {
         StringBuilder sb = new StringBuilder();
         sb.append("{\n");
@@ -171,8 +199,15 @@ public class JsonWriter {
                 sb.append(jd.write());
         sb.append("}");
         jp.json = sb.toString();
+        jp.init();
     }
     
+    /**
+     * Used to write a file to the system in json format. After writing, this (JsonWriter) will reset, removing all data. Must include your own extension. 
+     * 
+     * @param file the path, file, and extension you want to write the data to
+     * @throws IOException 
+     */
     public void write(String file) throws IOException {
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             writer.append("{\n");

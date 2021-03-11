@@ -22,7 +22,7 @@ public class JsonParser {
     /**
      * Used for creating an internal parser for reading ObjectArrays
      */
-    private JsonParser() {}
+    JsonParser() {}
     
     /**
      * Takes a file path and reads the data in as a String.
@@ -48,7 +48,7 @@ public class JsonParser {
     /**
      * Creates a depth map used to determine the end of objects and arrays
      */
-    private void init() {
+    final void init() {
         depthMap = new HashMap<>();
         int currentDepth = 0;
         for(int i = 0; i < json.length(); i++) {

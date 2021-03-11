@@ -174,6 +174,37 @@ class JsonValue extends JsonData {
         appendEnding();
     }
     
+    /**
+     * Used to insert a generic type. Generic type must be either a primitive wrapper or String.
+     * 
+     * @param name
+     * @param obj a generic object which can be cast to a primitive wrapper or String. Null is not supported.
+     * @throws PrimitiveWrapperException when obj cannot be cast to a primitive wrapper or String
+     */
+    public void putGenericPrimitive(String name, Object obj) throws PrimitiveWrapperException {
+        if(obj instanceof Integer) {
+            put(name, (Integer)obj);
+        } else if(obj instanceof String) {
+            put(name, (String)obj);
+        } else if(obj instanceof Double) {
+            put(name, (Double)obj);
+        } else if(obj instanceof Float) {
+            put(name, (Float)obj);
+        } else if(obj instanceof Boolean) {
+            put(name, (Boolean)obj);
+        } else if(obj instanceof Character) {
+            put(name, (Character)obj);
+        } else if(obj instanceof Byte) {
+            put(name, (Byte)obj);
+        } else if(obj instanceof Short) {
+            put(name, (Short)obj);
+        } else if(obj instanceof Long) {
+            put(name, (Long)obj);
+        } else {
+            throw new PrimitiveWrapperException("Unable to put value: " + name + ", value of type: " + (obj != null ? obj.getClass().getSimpleName() : "null") + " is not of primitive wrapper or String type");
+        }
+    }
+    
     @Override
     String writeLast() {
         sb.deleteCharAt(sb.length()-2);

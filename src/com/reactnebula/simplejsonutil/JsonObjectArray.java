@@ -45,25 +45,29 @@ public class JsonObjectArray extends JsonData {
     
     @Override
     String write() {
+        StringBuilder written = new StringBuilder();
+        written.append(sb);
         jObjects.forEach(jo -> {
             if(jo == jObjects.get(jObjects.size()-1)) 
-                sb.append(jo.writeLast());
+                written.append(jo.writeLast());
             else
-                sb.append(jo.write());
+                written.append(jo.write());
         });
-        sb.append(indent).append("],\n");
-        return sb.toString();
+        written.append(indent).append("],\n");
+        return written.toString();
     }
     
     @Override
     String writeLast() {
+        StringBuilder written = new StringBuilder();
+        written.append(sb);
         jObjects.forEach(jo -> {
             if(jo == jObjects.get(jObjects.size()-1)) 
-                sb.append(jo.writeLast());
+                written.append(jo.writeLast());
             else
-                sb.append(jo.write());
+                written.append(jo.write());
         });
-        sb.append(indent).append("]\n");
-        return sb.toString();
+        written.append(indent).append("]\n");
+        return written.toString();
     }
 }
