@@ -201,7 +201,7 @@ class JsonValue extends JsonData {
         } else if(obj instanceof Long) {
             put(name, (Long)obj);
         } else {
-            throw new PrimitiveWrapperException("Unable to put value: " + name + ", value of type: " + (obj != null ? obj.getClass().getSimpleName() : "null") + " is not of primitive wrapper or String type");
+            throw new PrimitiveWrapperException(name, obj != null ? obj.getClass().getSimpleName() : "null");
         }
     }
     

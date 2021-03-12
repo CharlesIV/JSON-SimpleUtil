@@ -152,7 +152,7 @@ public class JsonWriter {
     public void putGenericPrimitive(String name, Object obj) throws PrimitiveWrapperException {
         JsonValue jd = new JsonValue();
         jd.putGenericPrimitive(name, obj);
-        if(!jd.sb.isEmpty())
+        if(!jd.sb.toString().trim().equals("")) //!jd.sb.isEmpty() in Java 15+
             data.add(jd);
     }
     

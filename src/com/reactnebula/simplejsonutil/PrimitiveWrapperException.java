@@ -10,7 +10,10 @@ package com.reactnebula.simplejsonutil;
  * @author Charles
  */
 public class PrimitiveWrapperException extends RuntimeException {
-    PrimitiveWrapperException(String msg) {
-        super(msg);
+    public final String VALUE_NAME, CLASS_NAME;
+    PrimitiveWrapperException(String valueName, String className) {
+        super("Unable to put value: " + valueName + ", of type: " + className + ", which is not of primitive wrapper or String type");
+        VALUE_NAME = valueName;
+        CLASS_NAME = className;
     }
 }
