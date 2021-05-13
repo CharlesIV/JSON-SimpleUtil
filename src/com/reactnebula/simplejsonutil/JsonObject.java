@@ -111,7 +111,7 @@ public class JsonObject extends JsonValue {
             posOffset+=object.length();
         }
         int index = written.indexOf("{");
-        if(!written.toString().substring(index).replace('{', ' ').isBlank())
+        if(!written.toString().substring(index).replace('{', ' ').trim().isEmpty()) //can replace with isBlank() in newer version
             written.deleteCharAt(written.length()-2);
         
         written.append(indent).append("},\n");

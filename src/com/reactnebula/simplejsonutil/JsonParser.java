@@ -176,11 +176,27 @@ public class JsonParser {
         return value.toString();
     }
     
+    public byte parseByte(String name, byte defaultValue) {
+        try {
+            return parseByte(name);
+        } catch(JsonValueNotFoundException e) {
+            return defaultValue;
+        }
+    }
+    
     public byte parseByte(String name) throws JsonValueNotFoundException {
         String value = parseStringedValue(name);
         if(value.equals("null"))
             return 0;
         return Byte.parseByte(value);
+    }
+    
+    public short parseShort(String name, short defaultValue) {
+        try {
+            return parseShort(name);
+        } catch(JsonValueNotFoundException e) {
+            return defaultValue;
+        }
     }
     
     public short parseShort(String name) throws JsonValueNotFoundException {
@@ -190,11 +206,27 @@ public class JsonParser {
         return Short.parseShort(value);
     }
     
+    public int parseInteger(String name, int defaultValue) {
+        try {
+            return parseInteger(name);
+        } catch(JsonValueNotFoundException e) {
+            return defaultValue;
+        }
+    }
+    
     public int parseInteger(String name) throws JsonValueNotFoundException {
         String value = parseStringedValue(name);
         if(value.equals("null"))
             return 0;
         return Integer.parseInt(value);
+    }
+    
+    public float parseFloat(String name, float defaultValue) {
+        try {
+            return parseFloat(name);
+        } catch(JsonValueNotFoundException e) {
+            return defaultValue;
+        }
     }
     
     public float parseFloat(String name) throws JsonValueNotFoundException {
@@ -204,11 +236,27 @@ public class JsonParser {
         return Float.parseFloat(value);
     }
     
+    public double parseDouble(String name, double defaultValue) {
+        try {
+            return parseDouble(name);
+        } catch(JsonValueNotFoundException e) {
+            return defaultValue;
+        }
+    }
+    
     public double parseDouble(String name) throws JsonValueNotFoundException {
         String value = parseStringedValue(name);
         if(value.equals("null"))
             return 0;
         return Double.parseDouble(value);
+    }
+    
+    public long parseLong(String name, long defaultValue) {
+        try {
+            return parseLong(name);
+        } catch(JsonValueNotFoundException e) {
+            return defaultValue;
+        }
     }
     
     public long parseLong(String name) throws JsonValueNotFoundException {
@@ -218,11 +266,27 @@ public class JsonParser {
         return Long.parseLong(value);
     }
     
+    public String parseString(String name, String defaultValue) {
+        try {
+            return parseString(name);
+        } catch(JsonValueNotFoundException e) {
+            return defaultValue;
+        }
+    }
+    
     public String parseString(String name) throws JsonValueNotFoundException {
         String value = parseStringedValue(name);
         if(value.equals("null"))
             return "";
         return value.replace("\"", "");
+    }
+    
+    public boolean parseBoolean(String name, boolean defaultValue) {
+        try {
+            return parseBoolean(name);
+        } catch(JsonValueNotFoundException e) {
+            return defaultValue;
+        }
     }
     
     public boolean parseBoolean(String name) throws JsonValueNotFoundException {
@@ -232,11 +296,27 @@ public class JsonParser {
         return Boolean.parseBoolean(value);
     }
     
+    public char parseCharacter(String name, char defaultValue) {
+        try {
+            return parseCharacter(name);
+        } catch(JsonValueNotFoundException e) {
+            return defaultValue;
+        }
+    }
+    
     public char parseCharacter(String name) throws JsonValueNotFoundException {
         String value = parseStringedValue(name);
         if(value.equals("null"))
             return 0;
         return value.charAt(1);
+    }
+    
+    public byte[] parseByteArray(String name, byte[] defaultValue) {
+        try {
+            return parseByteArray(name);
+        } catch(JsonValueNotFoundException e) {
+            return defaultValue;
+        }
     }
     
     public byte[] parseByteArray(String name) throws JsonValueNotFoundException {
@@ -250,6 +330,14 @@ public class JsonParser {
         return result;
     }
     
+    public short[] parseShortArray(String name, short[] defaultValue) {
+        try {
+            return parseShortArray(name);
+        } catch(JsonValueNotFoundException e) {
+            return defaultValue;
+        }
+    }
+    
     public short[] parseShortArray(String name) throws JsonValueNotFoundException {
         String value = parseStringedValue(name, ARRAY_SEPERATOR);
         if(value.equals("null")||value.equals("]"))
@@ -259,6 +347,14 @@ public class JsonParser {
         for(int i = 0; i < array.length; i++)
             result[i] = Short.parseShort(array[i].trim());
         return result;
+    }
+    
+    public int[] parseIntegerArray(String name, int[] defaultValue) {
+        try {
+            return parseIntegerArray(name);
+        } catch(JsonValueNotFoundException e) {
+            return defaultValue;
+        }
     }
     
     public int[] parseIntegerArray(String name) throws JsonValueNotFoundException {
@@ -272,6 +368,14 @@ public class JsonParser {
         return result;
     }
     
+    public float[] parseFloatArray(String name, float[] defaultValue) {
+        try {
+            return parseFloatArray(name);
+        } catch(JsonValueNotFoundException e) {
+            return defaultValue;
+        }
+    }
+    
     public float[] parseFloatArray(String name) throws JsonValueNotFoundException {
         String value = parseStringedValue(name, ARRAY_SEPERATOR);
         if(value.equals("null")||value.equals("]"))
@@ -281,6 +385,14 @@ public class JsonParser {
         for(int i = 0; i < array.length; i++)
             result[i] = Float.parseFloat(array[i].trim());
         return result;
+    }
+    
+    public double[] parseDoubleArray(String name, double[] defaultValue) {
+        try {
+            return parseDoubleArray(name);
+        } catch(JsonValueNotFoundException e) {
+            return defaultValue;
+        }
     }
     
     public double[] parseDoubleArray(String name) throws JsonValueNotFoundException {
@@ -294,6 +406,14 @@ public class JsonParser {
         return result;
     }
     
+    public long[] parseLongArray(String name, long[] defaultValue) {
+        try {
+            return parseLongArray(name);
+        } catch(JsonValueNotFoundException e) {
+            return defaultValue;
+        }
+    }
+    
     public long[] parseLongArray(String name) throws JsonValueNotFoundException {
         String value = parseStringedValue(name, ARRAY_SEPERATOR);
         if(value.equals("null")||value.equals("]"))
@@ -305,11 +425,27 @@ public class JsonParser {
         return result;
     }
     
+    public String[] parseStringArray(String name, String[] defaultValue) {
+        try {
+            return parseStringArray(name);
+        } catch(JsonValueNotFoundException e) {
+            return defaultValue;
+        }
+    }
+    
     public String[] parseStringArray(String name) throws JsonValueNotFoundException {
         String value = parseStringedValue(name, ARRAY_SEPERATOR);
         if(value.equals("null")||value.equals("]"))
             return new String[0];
         return value.replace("]", "").replace("\n", "").replace("\",", "%%").replace("\"", "").trim().split("%%");
+    }
+    
+    public boolean[] parseBooleanArray(String name, boolean[] defaultValue) {
+        try {
+            return parseBooleanArray(name);
+        } catch(JsonValueNotFoundException e) {
+            return defaultValue;
+        }
     }
     
     public boolean[] parseBooleanArray(String name) throws JsonValueNotFoundException {
@@ -321,6 +457,14 @@ public class JsonParser {
         for(int i = 0; i < array.length; i++)
             result[i] = Boolean.parseBoolean(array[i].trim());
         return result;
+    }
+    
+    public char[] parseCharacterArray(String name, char[] defaultValue) {
+        try {
+            return parseCharacterArray(name);
+        } catch(JsonValueNotFoundException e) {
+            return defaultValue;
+        }
     }
     
     public char[] parseCharacterArray(String name) throws JsonValueNotFoundException {
