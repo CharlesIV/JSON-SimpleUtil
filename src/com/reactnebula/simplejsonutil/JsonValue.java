@@ -44,6 +44,22 @@ class JsonValue extends JsonData {
     
     public void put(String name, String string) {
         appendBeginning(name);
+        if(string.contains("\\"))
+            string = string.replace("\\", "\\\\");
+        if(string.contains("\""))
+            string = string.replace("\"", "\\\"");
+        if(string.contains("\n"))
+            string = string.replace("\n", "\\\n");
+        if(string.contains("\t"))
+            string = string.replace("\t", "\\\t");
+        if(string.contains("\'"))
+            string = string.replace("\'", "\\\'");
+        if(string.contains("\f"))
+            string = string.replace("\f", "\\\f");
+        if(string.contains("\r"))
+            string = string.replace("\r", "\\\r");
+        if(string.contains("\b"))
+            string = string.replace("\b", "\\\b");
         sb.append('"').append(string).append('"');
         appendEnding();
     }

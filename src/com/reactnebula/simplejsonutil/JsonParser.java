@@ -303,7 +303,26 @@ public class JsonParser {
         if(value.equals("null"))
             return "";
         try {
-            return value.replace("\"", "");
+            if(value.charAt(0)!='"')
+                throw new IncorrectParseTypeException("String", value);
+            if(value.contains("\\\\"))
+                value = value.replace("\\\\", "\\");
+            if(value.contains("\\\""))
+                value = value.replace("\\\"", "\"");
+            if(value.contains("\\\n"))
+                value = value.replace("\\\n", "\n");
+            if(value.contains("\\\t"))
+                value = value.replace("\\\t", "\t");
+            if(value.contains("\\\'"))
+                value = value.replace("\\\'", "\'");
+            if(value.contains("\\\f"))
+                value = value.replace("\\\f", "\f");
+            if(value.contains("\\\r"))
+                value = value.replace("\\\r", "\r");
+            if(value.contains("\\\b"))
+                value = value.replace("\\\b", "\b");
+            
+            return value.substring(1, value.length()-1);
         } catch(StringIndexOutOfBoundsException e) {
             throw new IncorrectParseTypeException("String", value);
         }
