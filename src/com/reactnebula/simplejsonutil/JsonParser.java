@@ -305,23 +305,7 @@ public class JsonParser {
         try {
             if(value.charAt(0)!='"')
                 throw new IncorrectParseTypeException("String", value);
-            if(value.contains("\\\\"))
-                value = value.replace("\\\\", "\\");
-            if(value.contains("\\\""))
-                value = value.replace("\\\"", "\"");
-            if(value.contains("\\\n"))
-                value = value.replace("\\\n", "\n");
-            if(value.contains("\\\t"))
-                value = value.replace("\\\t", "\t");
-            if(value.contains("\\\'"))
-                value = value.replace("\\\'", "\'");
-            if(value.contains("\\\f"))
-                value = value.replace("\\\f", "\f");
-            if(value.contains("\\\r"))
-                value = value.replace("\\\r", "\r");
-            if(value.contains("\\\b"))
-                value = value.replace("\\\b", "\b");
-            
+            value = revertEscapedString(value);
             return value.substring(1, value.length()-1);
         } catch(StringIndexOutOfBoundsException e) {
             throw new IncorrectParseTypeException("String", value);
@@ -363,23 +347,7 @@ public class JsonParser {
         if(value.equals("null"))
             return 0;
         try {
-            if(value.contains("\\\\"))
-                value = value.replace("\\\\", "\\");
-            if(value.contains("\\\""))
-                value = value.replace("\\\"", "\"");
-            if(value.contains("\\\n"))
-                value = value.replace("\\\n", "\n");
-            if(value.contains("\\\t"))
-                value = value.replace("\\\t", "\t");
-            if(value.contains("\\\'"))
-                value = value.replace("\\\'", "\'");
-            if(value.contains("\\\f"))
-                value = value.replace("\\\f", "\f");
-            if(value.contains("\\\r"))
-                value = value.replace("\\\r", "\r");
-            if(value.contains("\\\b"))
-                value = value.replace("\\\b", "\b");
-            
+            value = revertEscapedString(value);
             return value.charAt(1);
         } catch(StringIndexOutOfBoundsException e) {
             throw new IncorrectParseTypeException("char", value);
@@ -579,7 +547,9 @@ public class JsonParser {
         if(value.equals("null")||value.equals("]"))
             return new String[0];
         try {
-            return value.replace("]", "").replace("\n", "").replace("\",", "%%").replace("\"", "").trim().split("%%");
+            value = revertEscapedString(value);
+            String[] result = value.substring(1, value.length()-2).split("\", \"");//value.replace("]", "").replace("\n", "").replace("\",", "%%").replace("\"", "").trim().split("%%");
+            return result;
         } catch(StringIndexOutOfBoundsException e) {
             throw new IncorrectParseTypeException("String[]", "["+value);
         }
@@ -636,11 +606,14 @@ public class JsonParser {
         }
         if(value.equals("null")||value.equals("]"))
             return new char[0];
-        String[] array = value.replace("]", "").replace("\n", "").replace("\",", "%%").replace("\"", "").split("%%");
+        value = revertEscapedString(value);
+        String[] array = value.substring(1, value.length()-2).split("\", \"");
         char[] result = new char[array.length];
         try {
-            for(int i = 0; i < array.length; i++)
-                result[i] = array[i].trim().charAt(0);
+            for(int i = 0; i < array.length; i++) {
+                System.out.println(array[i]);
+                result[i] = array[i].charAt(0);
+            }
         } catch(StringIndexOutOfBoundsException e) {
             throw new IncorrectParseTypeException("char[]", "["+value);
         }
@@ -696,5 +669,25 @@ public class JsonParser {
             lastIndex = indexes.get(i);
         }
         return jObjects;
+    }
+    
+    private String revertEscapedString(String value) {
+        if(value.contains("\\\\"))
+            value = value.replace("\\\\", "\\");
+        if(value.contains("\\\""))
+            value = value.replace("\\\"", "\"");
+        if(value.contains("\\\n"))
+            value = value.replace("\\\n", "\n");
+        if(value.contains("\\\t"))
+            value = value.replace("\\\t", "\t");
+        if(value.contains("\\\'"))
+            value = value.replace("\\\'", "\'");
+        if(value.contains("\\\f"))
+            value = value.replace("\\\f", "\f");
+        if(value.contains("\\\r"))
+            value = value.replace("\\\r", "\r");
+        if(value.contains("\\\b"))
+            value = value.replace("\\\b", "\b");
+        return value;
     }
 }

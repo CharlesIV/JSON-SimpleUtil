@@ -44,23 +44,7 @@ class JsonValue extends JsonData {
     
     public void put(String name, String string) {
         appendBeginning(name);
-        if(string.contains("\\"))
-            string = string.replace("\\", "\\\\");
-        if(string.contains("\""))
-            string = string.replace("\"", "\\\"");
-        if(string.contains("\n"))
-            string = string.replace("\n", "\\\n");
-        if(string.contains("\t"))
-            string = string.replace("\t", "\\\t");
-        if(string.contains("\'"))
-            string = string.replace("\'", "\\\'");
-        if(string.contains("\f"))
-            string = string.replace("\f", "\\\f");
-        if(string.contains("\r"))
-            string = string.replace("\r", "\\\r");
-        if(string.contains("\b"))
-            string = string.replace("\b", "\\\b");
-        sb.append('"').append(string).append('"');
+        sb.append('"').append(escapeString(string)).append('"');
         appendEnding();
     }
     
@@ -72,35 +56,7 @@ class JsonValue extends JsonData {
     
     public void put(String name, char character) {
         appendBeginning(name);
-        switch(character) {
-            case '\\':
-                sb.append('"').append("\\\\").append('"');
-                break;
-            case '\"':
-                sb.append('"').append("\\\"").append('"');
-                break;
-            case '\n':
-                sb.append('"').append("\\\n").append('"');
-                break;
-            case '\t':
-                sb.append('"').append("\\\t").append('"');
-                break;
-            case '\'':
-                sb.append('"').append("\\\'").append('"');
-                break;
-            case '\f':
-                sb.append('"').append("\\\f").append('"');
-                break;
-            case '\r':
-                sb.append('"').append("\\\r").append('"');
-                break;    
-            case '\b':
-                sb.append('"').append("\\\b").append('"');
-                break;
-            default:
-                sb.append('"').append(character).append('"');
-                break;
-        }
+        sb.append('"').append(escapeCharacter(character)).append('"');
         appendEnding();
     }
     
@@ -186,7 +142,7 @@ class JsonValue extends JsonData {
         appendBeginning(name);
         sb.append("[");
         for(int i = 0; i < strings.length; i++) {
-            sb.append('"').append(strings[i]).append('"');
+            sb.append('"').append(escapeString(strings[i])).append('"');
             if(i < strings.length-1)
                 sb.append(", ");
         }
@@ -210,7 +166,7 @@ class JsonValue extends JsonData {
         appendBeginning(name);
         sb.append("[");
         for(int i = 0; i < characters.length; i++) {
-            sb.append('"').append(characters[i]).append('"');
+            sb.append('"').append(escapeCharacter(characters[i])).append('"');
             if(i < characters.length-1)
                 sb.append(", ");
         }
@@ -247,6 +203,49 @@ class JsonValue extends JsonData {
         } else {
             throw new PrimitiveWrapperException(name, obj != null ? obj.getClass().getSimpleName() : "null");
         }
+    }
+    
+    private String escapeCharacter(char c) {
+        switch(c) {
+            case '\\':
+                return "\\\\";
+            case '\"':
+                return "\\\"";
+            case '\n':
+                return "\\\n";
+            case '\t':
+                return "\\\t";
+            case '\'':
+                return "\\\'";
+            case '\f':
+                return "\\\f";
+            case '\r':
+                return "\\\r";
+            case '\b':
+                return "\\\b";
+            default:
+                return ""+c;
+        }
+    }
+    
+    private String escapeString(String string) {
+        if(string.contains("\\"))
+            string = string.replace("\\", "\\\\");
+        if(string.contains("\""))
+            string = string.replace("\"", "\\\"");
+        if(string.contains("\n"))
+            string = string.replace("\n", "\\\n");
+        if(string.contains("\t"))
+            string = string.replace("\t", "\\\t");
+        if(string.contains("\'"))
+            string = string.replace("\'", "\\\'");
+        if(string.contains("\f"))
+            string = string.replace("\f", "\\\f");
+        if(string.contains("\r"))
+            string = string.replace("\r", "\\\r");
+        if(string.contains("\b"))
+            string = string.replace("\b", "\\\b");
+        return string;
     }
     
     @Override
