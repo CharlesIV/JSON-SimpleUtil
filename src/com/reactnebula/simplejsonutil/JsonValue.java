@@ -72,7 +72,35 @@ class JsonValue extends JsonData {
     
     public void put(String name, char character) {
         appendBeginning(name);
-        sb.append('"').append(character).append('"');
+        switch(character) {
+            case '\\':
+                sb.append('"').append("\\\\").append('"');
+                break;
+            case '\"':
+                sb.append('"').append("\\\"").append('"');
+                break;
+            case '\n':
+                sb.append('"').append("\\\n").append('"');
+                break;
+            case '\t':
+                sb.append('"').append("\\\t").append('"');
+                break;
+            case '\'':
+                sb.append('"').append("\\\'").append('"');
+                break;
+            case '\f':
+                sb.append('"').append("\\\f").append('"');
+                break;
+            case '\r':
+                sb.append('"').append("\\\r").append('"');
+                break;    
+            case '\b':
+                sb.append('"').append("\\\b").append('"');
+                break;
+            default:
+                sb.append('"').append(character).append('"');
+                break;
+        }
         appendEnding();
     }
     
