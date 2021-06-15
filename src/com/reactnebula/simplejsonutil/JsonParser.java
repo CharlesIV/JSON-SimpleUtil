@@ -14,6 +14,7 @@ public class JsonParser {
     private final String SEPERATOR = "\":";
     private final String ARRAY_SEPERATOR = "\":[";
     private final String VALUE_BREAK = "\n\t";
+    private final String STRING_ARRAY_SEPERATOR = "\", \"";
     
     String json;
     private HashMap<Integer, Integer> depthMap;
@@ -548,7 +549,7 @@ public class JsonParser {
             return new String[0];
         try {
             value = revertEscapedString(value);
-            String[] result = value.substring(1, value.length()-2).split("\", \"");//value.replace("]", "").replace("\n", "").replace("\",", "%%").replace("\"", "").trim().split("%%");
+            String[] result = value.substring(1, value.length()-2).split(STRING_ARRAY_SEPERATOR);
             return result;
         } catch(StringIndexOutOfBoundsException e) {
             throw new IncorrectParseTypeException("String[]", "["+value);
@@ -607,13 +608,11 @@ public class JsonParser {
         if(value.equals("null")||value.equals("]"))
             return new char[0];
         value = revertEscapedString(value);
-        String[] array = value.substring(1, value.length()-2).split("\", \"");
+        String[] array = value.substring(1, value.length()-2).split(STRING_ARRAY_SEPERATOR);
         char[] result = new char[array.length];
         try {
-            for(int i = 0; i < array.length; i++) {
-                System.out.println(array[i]);
+            for(int i = 0; i < array.length; i++)
                 result[i] = array[i].charAt(0);
-            }
         } catch(StringIndexOutOfBoundsException e) {
             throw new IncorrectParseTypeException("char[]", "["+value);
         }
