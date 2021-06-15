@@ -5,6 +5,6 @@ This utility was made for those who need a simple way of writing and parsing pri
 
 The parser supports passing in a dot notation to a value, ex: "building.address".
 
-Escaped characters are allowed in String objects.
+Escaped characters are allowed.
 
 Parser will now throw a universal RuntimeException if you use the wrong parse method for a value. You can still use parseStringedValue() to get the value of any variable or object in String format.
