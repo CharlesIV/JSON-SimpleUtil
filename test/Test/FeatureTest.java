@@ -28,7 +28,7 @@ public class FeatureTest {
     public static void main(String[] args) throws Exception {
         JsonWriter writer = new JsonWriter();
         JsonObject jo = new JsonObject("test");
-            jo.put("name", new char[] {'\"'});
+            jo.put("name", new char[] {'"'});
             jo.put("uno", new String[] {"\"\"hi\"\""});
             
             JsonObject obj = jo.putObject("obj");
@@ -49,31 +49,30 @@ public class FeatureTest {
         writer.write(new File("testing.json"));
         
         JsonParser parser = new JsonParser(new File("testing.json"));
-        System.out.println(parser.parseStringedValue("test.obj"));
         System.out.println(Arrays.toString(parser.parseStringArray("test.uno")));
         System.out.println(Arrays.toString(parser.parseStringArray("test.name")));
         
         
         
         String json = "{\n" +
-"	\"test\":{\n" +
-"		\"name\":\"\\\"\"],\n" +
-"		\"uno\":[\"\\\"\\\"hi\\\"\\\"\"],\n" +
-"		\"obj\":{\n" +
-"			\"ha\":true\n" +
-"		},\n" +
-"		\"list\":[\n" +
-"		{\n" +
-"			\"uno\":1,\n" +
-"			\"dos\":null,\n" +
-"			\"tres\":null,\n" +
-"			\"sub\":{\n" +
-"				\"subby\":null\n" +
-"		}\n" +
-"		}\n" +
-"		]\n" +
-"	}\n" +
-"}";
+                    "	\"test\":{\n" +
+                    "		\"name\":[\"\\\"\"],\n" +
+                    "		\"uno\":[\"\\\"\\\"hi\\\"\\\"\"],\n" +
+                    "		\"obj\":{\n" +
+                    "			\"ha\":true\n" +
+                    "		},\n" +
+                    "		\"list\":[\n" +
+                    "		{\n" +
+                    "			\"uno\":1,\n" +
+                    "			\"dos\":null,\n" +
+                    "			\"tres\":null,\n" +
+                    "			\"sub\":{\n" +
+                    "				\"subby\":null\n" +
+                    "		}\n" +
+                    "		}\n" +
+                    "		]\n" +
+                    "	}\n" +
+                    "}";
         JsonParser p = new JsonParser(json);
         String j = p.parseStringedValue("test.name");
         System.out.println(j);
