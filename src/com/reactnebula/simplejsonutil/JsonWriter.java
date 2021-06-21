@@ -227,7 +227,7 @@ public class JsonWriter {
     }
     
     /**
-     * Writes the JSON data to a String. If the resetOnWrite flag has not been set, then this does not reset the writer after writing.
+     * Writes the JSON data to a String.
      * @return 
      */
     public String write() {

@@ -28,6 +28,7 @@ public class JsonObject extends JsonValue {
     ArrayList<JsonData> jObjects = new ArrayList<>();
     ArrayList<Integer> jIndex = new ArrayList<>();
     boolean isParsedObject;
+    private boolean insertedIndent;
     
     public JsonObject(String name) {
         if(!name.equals(""))
@@ -46,6 +47,7 @@ public class JsonObject extends JsonValue {
             jo.jIndex.set(i, jo.jIndex.get(i)+indent.length()+1);
         jo.indent = indent+TAB;
         insertIndent(jo, indent);
+        jo.insertedIndent = true;
     }
     
     public static void insertIndent(JsonObject jo, String indent) {
@@ -142,7 +144,10 @@ public class JsonObject extends JsonValue {
         if(!written.toString().substring(index).replace('{', ' ').trim().isEmpty()) //can replace with isBlank() in newer version
             written.deleteCharAt(written.length()-2);
         
-        written.append(indent).append("},\n");
+        written.append(indent);
+        if(insertedIndent)
+            written.append(TAB);
+        written.append("},\n");
         return written.toString();
     }
 }

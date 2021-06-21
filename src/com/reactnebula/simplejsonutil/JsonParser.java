@@ -661,7 +661,8 @@ public class JsonParser {
         JsonObject jo = new JsonObject(name);
         jo.sb = new StringBuilder();
         try {
-            jo.sb = jo.sb.append(name).append(SEPERATOR).append(object.trim()).replace(jo.sb.lastIndexOf("\n"), jo.sb.length(), "");
+            jo.sb = jo.sb.append('"').append(name).append(SEPERATOR).append(object.trim());
+            jo.sb.deleteCharAt(jo.sb.lastIndexOf("}"));
             jo.isParsedObject = true;
         } catch(StringIndexOutOfBoundsException e) {
             throw new IncorrectParseTypeException("JsonObject", object);
