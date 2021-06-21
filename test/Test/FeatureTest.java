@@ -17,6 +17,8 @@
 package Test;
 
 import com.reactnebula.simplejsonutil.*;
+import java.io.File;
+import java.util.Arrays;
 
 /**
  *
@@ -25,93 +27,56 @@ import com.reactnebula.simplejsonutil.*;
 public class FeatureTest {
     public static void main(String[] args) throws Exception {
         JsonWriter writer = new JsonWriter();
-        writer.put("nullable");
-        writer.put("string", "hello world");
-        writer.put("byte", (byte)1);
-        writer.put("short", (short)2);
-        writer.put("int", 3);
-        writer.put("long", 4L);
-        writer.put("float", 5f);
-        writer.put("double", 6.0);
-        writer.put("char", 'a');
-        writer.put("boolean", true);
-        
-        writer.put("stringArray", new String[]{"hello", "world"});
-        writer.put("byteArray", new byte[0]);
-        writer.put("shortArray", new short[]{1,2,3});
-        writer.put("intArray", new int[]{1,2,3});
-        writer.put("longArray", new long[]{1,2,3});
-        writer.put("floatArray", new float[]{1,2,3});
-        writer.put("doubleArray", new double[]{1,2,3});
-        writer.put("charArray", new char[]{'a', 'b', 'c'});
-        writer.put("booleanArray", new boolean[]{true, false, true});
-        
-        JsonObject jo = new JsonObject("fridge");
-        jo.put("x", 20);
-        jo.put("y", 20);
-        jo.put("ending", 123);
-        writer.putObject(jo);
-        
-        JsonObject jo1 = writer.putObject("object");
-            jo1.put("name", "object name");
-            jo1.put("num", 231812L);
-            jo1.put("objectBools", new boolean[]{true, false, true});
+        JsonObject jo = new JsonObject("test");
+            jo.put("name", new char[] {'\"'});
+            jo.put("uno", new String[] {"\"\"hi\"\""});
             
-            JsonObject jo2 = jo1.putObject("subObject");
-                jo2.put("name", "object2 name");
-                jo2.put("numbers", new int[]{1,2,3,4});
+            JsonObject obj = jo.putObject("obj");
+                obj.put("ha", true);
+            JsonObjectArray joa = jo.putObjectArray("list");
+            
+                JsonObject generic = new JsonObject("generic");
+                generic.put("uno", 1);
+                generic.put("dos");
+                generic.put("tres");
+                    JsonObject sub = new JsonObject("sub");
+                    sub.put("subby");
+                    generic.putObject(sub);
+            
+                joa.putObject(generic);
                 
-                JsonObject jo3 = new JsonObject("subSubObject");
-                    jo3.put("name", "object 3 name");
-                    jo3.put("nullable");
-                    jo2.putObject(jo3);
-                JsonObjectArray joa = jo2.putObjectArray("object-array");
-                    JsonObject ajo1 = joa.putObject();
-                        ajo1.put("letter", 'a');
-                    JsonObject ajo2 = joa.putObject();
-                        ajo2.put("letter", 'b');
-                    JsonObject ajo3 = joa.putObject();
-                        ajo3.put("letter", 'c');
-                    JsonObject ajo4 = new JsonObject("manual");
-                        ajo4.put("letter", 'd');
-                        ajo4.put("number", 1);
-                        joa.putObject(ajo4);
+        writer.putObject(jo);
+        writer.write(new File("testing.json"));
         
-        JsonObjectArray joa2 = writer.putObjectArray("writer");
-            JsonObject a2jo1 = joa2.putObject();
-                a2jo1.put("letter", 'a');
-            JsonObject a2jo2 = joa2.putObject();
-                a2jo2.put("letter", 'b');
-            JsonObject a2jo3 = joa2.putObject();
-                a2jo3.put("letter", 'c');
-            JsonObject a2jo4 = new JsonObject("manual");
-                a2jo4.put("letter", 'd');
-                a2jo4.put("number", 1);
-                JsonObject inv = a2jo3.putObject("inventory");
-                    inv.put("width");
-                    inv.put("height");
-                    JsonObjectArray a2joa1 = inv.putObjectArray("items");
-                        JsonObject j = a2joa1.putObject();
-                        j.put("name");
-                joa2.putObject(a2jo4);
+        JsonParser parser = new JsonParser(new File("testing.json"));
+        System.out.println(parser.parseStringedValue("test.obj"));
+        System.out.println(Arrays.toString(parser.parseStringArray("test.uno")));
+        System.out.println(Arrays.toString(parser.parseStringArray("test.name")));
         
-        JsonObjectArray furniture = writer.putObjectArray("furniture");
-        JsonObject fridge = new JsonObject("fridge");
-        furniture.putObject(fridge);
-        fridge.put("x", 20);
-        fridge.put("y", 20);
-        JsonObject inv2 = new JsonObject("inventory");
         
-        inv2.put("width", 2);
-        inv2.put("height", 2);
-        JsonObjectArray items = inv2.putObjectArray("items");
-        items.putObject();
         
-        fridge.putObject(inv2);
+        String json = "{\n" +
+"	\"test\":{\n" +
+"		\"name\":\"\\\"\"],\n" +
+"		\"uno\":[\"\\\"\\\"hi\\\"\\\"\"],\n" +
+"		\"obj\":{\n" +
+"			\"ha\":true\n" +
+"		},\n" +
+"		\"list\":[\n" +
+"		{\n" +
+"			\"uno\":1,\n" +
+"			\"dos\":null,\n" +
+"			\"tres\":null,\n" +
+"			\"sub\":{\n" +
+"				\"subby\":null\n" +
+"		}\n" +
+"		}\n" +
+"		]\n" +
+"	}\n" +
+"}";
+        JsonParser p = new JsonParser(json);
+        String j = p.parseStringedValue("test.name");
+        System.out.println(j);
         
-        writer.write("testing.json");
-        
-        JsonParser parser = new JsonParser("testing.json");
-        byte[] name = parser.parseByteArray("byteArray");
     }
 }

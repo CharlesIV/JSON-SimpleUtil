@@ -1,5 +1,9 @@
 package com.reactnebula.simplejsonutil;
 
+import com.reactnebula.simplejsonutil.exceptions.IncorrectParseTypeException;
+import com.reactnebula.simplejsonutil.exceptions.InvalidJsonException;
+import com.reactnebula.simplejsonutil.exceptions.JsonValueNotFoundException;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -26,12 +30,23 @@ public class JsonParser {
     JsonParser() {}
     
     /**
-     * Takes a file path and reads the data in as a String.
+     * Takes a file and reads the JSON data.
      * @param file the path to the file
      * @throws IOException 
      */
-    public JsonParser(String file) throws IOException {
-        json = new String(Files.readAllBytes(Paths.get(file)));
+    public JsonParser(File file) throws IOException {
+        json = new String(Files.readAllBytes(file.toPath()));
+        init();
+    }
+    
+    /**
+     * Takes a JSON String to parse data from. The parser DOES NOT check for correct syntax*! (Garbage in, Garbage Out)
+     * <br/>
+     * *Does check that all {} and [] are in pairs.
+     * @param json 
+     */
+    public JsonParser(String json) {
+        this.json = String.valueOf(json);
         init();
     }
     
@@ -42,7 +57,10 @@ public class JsonParser {
      * @param jo 
      */
     public JsonParser(JsonObject jo) {
-        json = jo.sb.toString() + "\n}";
+        if(jo.isParsedObject)
+            json = jo.sb.toString();
+        else
+            json = jo.writeLast();
         init();
     }
     
@@ -62,6 +80,8 @@ public class JsonParser {
                 depthMap.put(i, currentDepth);
             }
         }
+        if(currentDepth != 0)
+            throw new InvalidJsonException("Unmatched {} or []", json);
     }
     
     public JsonParser setParser(String file) throws IOException {
@@ -627,6 +647,7 @@ public class JsonParser {
         jo.sb = new StringBuilder();
         try {
             jo.sb = jo.sb.append(name).append(SEPERATOR).append(object.trim()).replace(jo.sb.lastIndexOf("\n"), jo.sb.length(), "");
+            jo.isParsedObject = true;
         } catch(StringIndexOutOfBoundsException e) {
             throw new IncorrectParseTypeException("JsonObject", object);
         }
@@ -664,6 +685,7 @@ public class JsonParser {
             JsonObject temp = new JsonObject("temp");
             temp.sb.delete(0, temp.sb.length());
             temp.sb.append(array.subSequence(lastIndex, indexes.get(i)));
+            temp.isParsedObject = true;
             jObjects[i] = temp;
             lastIndex = indexes.get(i);
         }

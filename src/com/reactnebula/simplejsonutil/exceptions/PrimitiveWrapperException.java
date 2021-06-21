@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.reactnebula.simplejsonutil;
+package com.reactnebula.simplejsonutil.exceptions;
 
 /**
  *
@@ -11,7 +11,7 @@ package com.reactnebula.simplejsonutil;
  */
 public class PrimitiveWrapperException extends RuntimeException {
     public final String VALUE_NAME, CLASS_NAME;
-    PrimitiveWrapperException(String valueName, String className) {
+    public PrimitiveWrapperException(String valueName, String className) {
         super("Unable to put value: " + valueName + ", of type: " + className + ", which is not of primitive wrapper or String type");
         VALUE_NAME = valueName;
         CLASS_NAME = className;

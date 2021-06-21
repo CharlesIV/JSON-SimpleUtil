@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.reactnebula.simplejsonutil;
+package com.reactnebula.simplejsonutil.exceptions;
 
 /**
  *
@@ -25,7 +25,7 @@ public class IncompatibleJsonObjectException extends Exception {
      * Used when implementing a method to create an Object from JSON.
      * @param name 
      */
-    public IncompatibleJsonObjectException(String name) {
-        super(name);
+    public IncompatibleJsonObjectException(String msg) {
+        super(msg);
     }
 }

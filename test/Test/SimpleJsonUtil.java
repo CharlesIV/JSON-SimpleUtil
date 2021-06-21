@@ -16,7 +16,10 @@
  */
 package Test;
 
+import com.reactnebula.simplejsonutil.exceptions.IncompatibleJsonObjectException;
+import com.reactnebula.simplejsonutil.exceptions.JsonValueNotFoundException;
 import com.reactnebula.simplejsonutil.*;
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -24,7 +27,7 @@ import java.io.IOException;
  * @author Charles
  */
 public class SimpleJsonUtil {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, JsonValueNotFoundException {
         JsonWriter writer = new JsonWriter();
         EmployeeFactory factory = new EmployeeFactory();
         Employee emp1 = factory.newEmployee("Bill", "Johnson", 'm', "Arizonia", 23, "Jim", "Catherine");
@@ -55,18 +58,21 @@ public class SimpleJsonUtil {
                         pa2.put("title", "intermediate");
                         pa2.put("price", 40);
         
+        JsonParser p = new JsonParser(pr2);
+        p.parseString("name");
+                        
         JsonObjectArray employees = writer.putObjectArray("employees");
         employees.putObject(emp1.toJson());
         employees.putObject(emp2.toJson());
         employees.putObject(emp3.toJson());
         employees.putObject(emp4.toJson());
         
-        writer.write("company.json"); //throws IOException
+        writer.write(new File("company.json")); //throws IOException
         
-        JsonParser parser = new JsonParser("company.json");
+        JsonParser parser = new JsonParser(new File("company.json"));
         try {
             //Parsing for any value can throw a JsonValueNotFoundException
-            String address = parser.parseString("building.security");
+            boolean address = parser.parseBoolean("building.security");
             System.out.println(address);
             
             JsonObject[] pEmployees = parser.parseObjectArray("employees");
@@ -79,6 +85,7 @@ public class SimpleJsonUtil {
             System.out.println(match);
             
         } catch (JsonValueNotFoundException | IncompatibleJsonObjectException ex) {
+            ex.printStackTrace();
             System.err.println(ex.getMessage());
         }
     }

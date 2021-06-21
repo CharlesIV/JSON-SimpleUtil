@@ -16,6 +16,8 @@
  */
 package com.reactnebula.simplejsonutil;
 
+import com.reactnebula.simplejsonutil.exceptions.IncompatibleJsonObjectException;
+
 /**
  *
  * @author Charles

@@ -1,5 +1,7 @@
 package com.reactnebula.simplejsonutil;
 
+import com.reactnebula.simplejsonutil.exceptions.PrimitiveWrapperException;
+
 /**
  *
  * @author Charles

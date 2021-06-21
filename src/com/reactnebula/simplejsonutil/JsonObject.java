@@ -1,5 +1,6 @@
 package com.reactnebula.simplejsonutil;
 
+import com.reactnebula.simplejsonutil.exceptions.IncompatibleJsonObjectException;
 import java.util.ArrayList;
 
 /**
@@ -10,6 +11,7 @@ public class JsonObject extends JsonValue {
     
     ArrayList<JsonData> jObjects = new ArrayList<>();
     ArrayList<Integer> jIndex = new ArrayList<>();
+    boolean isParsedObject;
     
     public JsonObject(String name) {
         if(!name.equals(""))
@@ -75,6 +77,16 @@ public class JsonObject extends JsonValue {
     protected void appendBeginning(String name) {
         sb.append(indent);
         super.appendBeginning(name);
+    }
+    
+    /**
+     * Creates an object from the data in this JsonObject 
+     * @param factory defines how a JsonObject should be converted to an object
+     * @return an object that is the same type as defined by the factory
+     * @throws IncompatibleJsonObjectException 
+     */
+    public Object toObject(ObjectFactory factory) throws IncompatibleJsonObjectException {
+        return factory.fromJson(this);
     }
     
     /**

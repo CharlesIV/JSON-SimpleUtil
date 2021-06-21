@@ -16,10 +16,10 @@
  */
 package Test;
 
-import com.reactnebula.simplejsonutil.IncompatibleJsonObjectException;
+import com.reactnebula.simplejsonutil.exceptions.IncompatibleJsonObjectException;
 import com.reactnebula.simplejsonutil.JsonObject;
 import com.reactnebula.simplejsonutil.JsonParser;
-import com.reactnebula.simplejsonutil.JsonValueNotFoundException;
+import com.reactnebula.simplejsonutil.exceptions.JsonValueNotFoundException;
 import com.reactnebula.simplejsonutil.ObjectFactory;
 
 /**

@@ -1,6 +1,8 @@
 package com.reactnebula.simplejsonutil;
 
+import com.reactnebula.simplejsonutil.exceptions.PrimitiveWrapperException;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -186,8 +188,8 @@ public class JsonWriter {
     }
     
     /**
-     * 
-     * @param jp the JsonParser to write the data to. Does not reset the writer after writing.
+     * Writes the JSON stored in the writer to the JsonParser. If the resetOnWrite flag has not been set, then this does not reset the writer after writing.
+     * @param jp the JsonParser to write the data to.
      */
     public void write(JsonParser jp) {
         StringBuilder sb = new StringBuilder();
@@ -202,13 +204,44 @@ public class JsonWriter {
         jp.init();
     }
     
+    public void write(JsonParser jp, boolean resetWriter) {
+        write(jp);
+        if(resetWriter)
+            reset();
+    }
+    
     /**
-     * Used to write a file to the system in json format. After writing, this (JsonWriter) will reset, removing all data. Must include your own extension. 
+     * Writes the JSON data to a String. If the resetOnWrite flag has not been set, then this does not reset the writer after writing.
+     * @return 
+     */
+    public String write() {
+        StringBuilder writer = new StringBuilder();
+        writer.append("{\n");
+        for(JsonData jd : data)
+            if(data.indexOf(jd)==data.size()-1)
+                writer.append(jd.writeLast());
+            else
+                writer.append(jd.write());
+        writer.append("}");
+        return writer.toString();
+    }
+    
+    public String write(boolean resetWriter) {
+        try {
+            return write();
+        } finally {
+            if(resetWriter)
+                reset();
+        }
+    }
+    
+    /**
+     * Used to write a file to the system in JSON format. If the resetOnWrite flag has not been set, then this does not reset the writer after writing.
      * 
-     * @param file the path, file, and extension you want to write the data to
+     * @param file 
      * @throws IOException 
      */
-    public void write(String file) throws IOException {
+    public void write(File file) throws IOException {
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             writer.append("{\n");
             for(JsonData jd : data)
@@ -218,6 +251,11 @@ public class JsonWriter {
                     writer.append(jd.write());
             writer.append("}");
         }
-        reset();
+    }
+    
+    public void write(File file, boolean resetWriter) throws IOException {
+        write();
+        if(resetWriter)
+            reset();
     }
 }
