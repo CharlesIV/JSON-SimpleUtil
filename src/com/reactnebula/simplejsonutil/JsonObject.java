@@ -15,7 +15,7 @@ public class JsonObject extends JsonValue {
     
     public JsonObject(String name) {
         if(!name.equals(""))
-            sb.append(TAB).append('"').append(name).append('"').append(":");
+            sb.append(TAB).append('"').append(name).append(SEPERATOR);
         sb.append("{\n");
         indent = TAB;
     }

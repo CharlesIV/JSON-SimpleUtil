@@ -1,5 +1,9 @@
 package com.reactnebula.simplejsonutil;
 
+import static com.reactnebula.simplejsonutil.JsonData.ARRAY_SEPERATOR;
+import static com.reactnebula.simplejsonutil.JsonData.SEPERATOR;
+import static com.reactnebula.simplejsonutil.JsonData.STRING_ARRAY_SEPERATOR;
+import static com.reactnebula.simplejsonutil.JsonData.VALUE_BREAK;
 import com.reactnebula.simplejsonutil.exceptions.IncorrectParseTypeException;
 import com.reactnebula.simplejsonutil.exceptions.InvalidJsonException;
 import com.reactnebula.simplejsonutil.exceptions.JsonValueNotFoundException;
@@ -15,11 +19,6 @@ import java.util.HashMap;
  * @author Charles
  */
 public class JsonParser {
-    private final String SEPERATOR = "\":";
-    private final String ARRAY_SEPERATOR = "\":[";
-    private final String VALUE_BREAK = "\n\t";
-    private final String STRING_ARRAY_SEPERATOR = "\", \"";
-    
     String json;
     private HashMap<Integer, Integer> depthMap;
     private int index, depth, greatestIndex;
