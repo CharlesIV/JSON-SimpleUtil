@@ -209,13 +209,15 @@ public class JsonWriter {
      */
     public void write(JsonParser jp) {
         StringBuilder sb = new StringBuilder();
-        sb.append("{\n");
+        if(data.size() != 1 || !(data.get(0) instanceof JsonObject))
+            sb.append("{\n");
         for(JsonData jd : data)
             if(data.indexOf(jd)==data.size()-1)
                 sb.append(jd.writeLast());
             else
                 sb.append(jd.write());
-        sb.append("}");
+        if(data.size() != 1 || !(data.get(0) instanceof JsonObject))
+            sb.append("}");
         jp.json = sb.toString();
         jp.init();
     }
@@ -232,13 +234,15 @@ public class JsonWriter {
      */
     public String write() {
         StringBuilder writer = new StringBuilder();
-        writer.append("{\n");
+        if(data.size() != 1 || !(data.get(0) instanceof JsonObject))
+            writer.append("{\n");
         for(JsonData jd : data)
             if(data.indexOf(jd)==data.size()-1)
                 writer.append(jd.writeLast());
             else
                 writer.append(jd.write());
-        writer.append("}");
+        if(data.size() != 1 || !(data.get(0) instanceof JsonObject))
+            writer.append("}");
         return writer.toString();
     }
     
@@ -259,13 +263,15 @@ public class JsonWriter {
      */
     public void write(File file) throws IOException {
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            writer.append("{\n");
+            if(data.size() != 1 || !(data.get(0) instanceof JsonObject))
+                writer.append("{\n");
             for(JsonData jd : data)
                 if(data.indexOf(jd)==data.size()-1)
                     writer.append(jd.writeLast());
                 else
                     writer.append(jd.write());
-            writer.append("}");
+            if(data.size() != 1 || !(data.get(0) instanceof JsonObject))
+                writer.append("}");
         }
     }
     

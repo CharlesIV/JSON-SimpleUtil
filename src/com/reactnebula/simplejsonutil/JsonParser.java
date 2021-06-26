@@ -19,6 +19,7 @@ package com.reactnebula.simplejsonutil;
 import static com.reactnebula.simplejsonutil.JsonData.ARRAY_SEPERATOR;
 import static com.reactnebula.simplejsonutil.JsonData.SEPERATOR;
 import static com.reactnebula.simplejsonutil.JsonData.STRING_ARRAY_SEPERATOR;
+import static com.reactnebula.simplejsonutil.JsonData.TAB;
 import static com.reactnebula.simplejsonutil.JsonData.VALUE_BREAK;
 import com.reactnebula.simplejsonutil.exceptions.IncorrectParseTypeException;
 import com.reactnebula.simplejsonutil.exceptions.InvalidJsonException;
@@ -658,11 +659,9 @@ public class JsonParser {
         String object = parseStringedValue(name);
         if(object.equals("null"))
             return null;
-        JsonObject jo = new JsonObject(name);
-        jo.sb = new StringBuilder();
+        JsonObject jo = new JsonObject();
         try {
-            jo.sb = jo.sb.append('"').append(name).append(SEPERATOR).append(object.trim());
-            jo.sb.deleteCharAt(jo.sb.lastIndexOf("}"));
+            jo.sb.append(object.trim());
             jo.isParsedObject = true;
         } catch(StringIndexOutOfBoundsException e) {
             throw new IncorrectParseTypeException("JsonObject", object);
@@ -698,8 +697,7 @@ public class JsonParser {
         JsonObject[] jObjects = new JsonObject[indexes.size()];
         int lastIndex = 0;
         for(int i = 0; i < indexes.size(); i++) {
-            JsonObject temp = new JsonObject("temp");
-            temp.sb.delete(0, temp.sb.length());
+            JsonObject temp = new JsonObject();
             temp.sb.append(array.subSequence(lastIndex, indexes.get(i)));
             temp.isParsedObject = true;
             jObjects[i] = temp;

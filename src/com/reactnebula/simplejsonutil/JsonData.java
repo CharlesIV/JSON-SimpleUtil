@@ -21,15 +21,15 @@ package com.reactnebula.simplejsonutil;
  * @author Charles
  */
 public abstract class JsonData {
-    static final String TAB = "\t";
-    static final String SEPERATOR = "\":";
-    static final String ARRAY_SEPERATOR = "\":[";
-    static final String VALUE_BREAK = "\n\t";
-    static final String STRING_ARRAY_SEPERATOR = "\", \"";
+    protected static final String TAB = "\t";
+    protected static final String SEPERATOR = "\":";
+    protected static final String ARRAY_SEPERATOR = "\":[";
+    protected static final String VALUE_BREAK = "\n\t";
+    protected static final String STRING_ARRAY_SEPERATOR = "\", \"";
     
-    StringBuilder sb = new StringBuilder();
-    String indent = TAB;
+    protected StringBuilder sb = new StringBuilder();
+    protected String indent = TAB;
     
-    abstract String write();
-    abstract String writeLast();
+    protected abstract String write();
+    protected abstract String writeLast();
 }

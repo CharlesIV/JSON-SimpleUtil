@@ -29,28 +29,21 @@ public class JsonObject extends JsonValue {
     ArrayList<Integer> jIndex = new ArrayList<>();
     boolean isParsedObject;
     private boolean insertedIndent;
+    private final String name;
+    
+    JsonObject(){
+        name = "";
+    }
     
     public JsonObject(String name) {
+        this.name = name;
         if(!name.equals(""))
             sb.append(TAB).append('"').append(name).append(SEPERATOR);
         sb.append("{\n");
         indent = TAB;
     }
-    
-    public void putObject(JsonObject jo) {
-        jObjects.add(jo);
-        if(sb.charAt(sb.length()-2)!=',')
-            sb.append(",\n");
-        jIndex.add(sb.length());
-        jo.sb.insert(0, indent+TAB);
-        for(int i = 0; i < jo.jIndex.size();i++)
-            jo.jIndex.set(i, jo.jIndex.get(i)+indent.length()+1);
-        jo.indent = indent+TAB;
-        insertIndent(jo, indent);
-        jo.insertedIndent = true;
-    }
-    
-    public static void insertIndent(JsonObject jo, String indent) {
+
+    static void insertIndent(JsonObject jo, String indent) {
         if(indent.length()==0)
             return;
         String object = jo.sb.toString();
@@ -71,6 +64,19 @@ public class JsonObject extends JsonValue {
             }
             index = nextIndex;
         }
+    }
+    
+    public void putObject(JsonObject jo) {
+        jObjects.add(jo);
+        if(sb.charAt(sb.length()-2)!=',')
+            sb.append(",\n");
+        jIndex.add(sb.length());
+        jo.sb.insert(0, indent+TAB);
+        for(int i = 0; i < jo.jIndex.size();i++)
+            jo.jIndex.set(i, jo.jIndex.get(i)+indent.length()+1);
+        jo.indent = indent+TAB;
+        insertIndent(jo, indent);
+        jo.insertedIndent = true;
     }
     
     public JsonObject putObject(String name) {
@@ -124,13 +130,15 @@ public class JsonObject extends JsonValue {
     }
     
     @Override
-    String writeLast() {
+    protected String writeLast() {
         String written = write();
-        return written.substring(0, written.length()-2).concat("\n");
+        if(!isParsedObject)
+            return written.substring(0, written.length()-2).concat("\n");
+        return written;
     }
     
     @Override
-    String write() {
+    protected String write() {
         StringBuilder written = new StringBuilder();
         written.append(sb);
         
@@ -147,7 +155,8 @@ public class JsonObject extends JsonValue {
         written.append(indent);
         if(insertedIndent)
             written.append(TAB);
-        written.append("},\n");
+        if(!isParsedObject)
+            written.append("},\n");
         return written.toString();
     }
 }

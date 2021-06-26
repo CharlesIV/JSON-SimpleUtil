@@ -16,6 +16,8 @@
  */
 package com.reactnebula.simplejsonutil;
 
+import com.reactnebula.simplejsonutil.exceptions.IncompatibleJsonObjectException;
+import com.reactnebula.simplejsonutil.exceptions.JsonValueNotFoundException;
 import java.util.ArrayList;
 
 /**
@@ -24,14 +26,38 @@ import java.util.ArrayList;
  */
 public class JsonObjectArray extends JsonData {
     
-    ArrayList<JsonObject> jObjects = new ArrayList<>();
+    ArrayList<JsonData> jObjects = new ArrayList<>();
+    private final String name;
+    
+    private JsonObjectArray() {
+        sb.append("[\n");
+        name = "";
+    }
     
     JsonObjectArray(String name) {
+        this.name = name;
         sb.append(indent);
         sb.append('"').append(name).append('"');
         sb.append(":");
         sb.append("[\n");
     }
+    
+    static void insertIndent(JsonObjectArray jo, String indent) {
+        if(indent.length()==0)
+            return;
+        String object = jo.sb.toString();
+        int index = object.indexOf("\n", 1);
+        int count = 1;
+        while(index!=-1) {
+            int nextIndex = object.indexOf("\n", index+1);
+            if(nextIndex==-1)
+                return;
+            
+            jo.sb.insert(index+count*indent.length(), indent);
+            count++;
+            index = nextIndex;
+        }
+    } 
     
     public JsonObject putObject() {
         JsonObject jo = new JsonObject("");
@@ -59,8 +85,48 @@ public class JsonObjectArray extends JsonData {
         jObjects.add(jo);
     }
     
+    public JsonObjectArray putObjectArray() {
+        JsonObjectArray joa = new JsonObjectArray();
+        joa.sb.insert(0, indent);
+        joa.indent = indent+TAB;
+        jObjects.add(joa);
+        return joa;
+    }
+    
+    public void putObjectArray(JsonObjectArray joa) {
+        insertIndent(joa, indent);
+        jObjects.add(joa);
+    }
+    
+    public Object[] toObjectArray(ObjectFactory factory) throws IncompatibleJsonObjectException {
+        JsonObject[] jObjects = toJsonObjects();
+        Object[] objects = new Object[jObjects.length];
+        for(int i = 0; i < jObjects.length; i++)
+            objects[i] = jObjects[i].toObject(factory);
+        return objects;
+    }
+    
+    public JsonObject[] toJsonObjects() {
+        JsonParser p = new JsonParser();
+        p.json = writeLast();
+        boolean blank = name.isEmpty();
+        
+        try {
+            if(blank)  {
+                sb.insert(0, "\"temp\":");
+                return p.parseObjectArray("temp");
+            }
+            return p.parseObjectArray(name);
+        } catch(JsonValueNotFoundException e) {}
+        finally {
+            if(blank)
+                sb.subSequence(7, sb.length());
+        }
+        return new JsonObject[0];
+    }
+    
     @Override
-    String write() {
+    protected String write() {
         StringBuilder written = new StringBuilder();
         written.append(sb);
         jObjects.forEach(jo -> {
@@ -74,7 +140,7 @@ public class JsonObjectArray extends JsonData {
     }
     
     @Override
-    String writeLast() {
+    protected String writeLast() {
         StringBuilder written = new StringBuilder();
         written.append(sb);
         jObjects.forEach(jo -> {

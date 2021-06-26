@@ -267,13 +267,13 @@ class JsonValue extends JsonData {
     }
     
     @Override
-    String writeLast() {
+    protected String writeLast() {
         sb.deleteCharAt(sb.length()-2);
         return write();
     }
     
     @Override
-    String write() {
+    protected String write() {
         return sb.toString();
     }
     
@@ -284,7 +284,6 @@ class JsonValue extends JsonData {
     }
     
     protected void appendEnding() {
-        sb.append(",");
-        sb.append("\n");
+        sb.append(",\n");
     }
 }
