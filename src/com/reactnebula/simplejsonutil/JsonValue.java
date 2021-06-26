@@ -16,6 +16,7 @@
  */
 package com.reactnebula.simplejsonutil;
 
+import com.reactnebula.simplejsonutil.exceptions.InvalidNameException;
 import com.reactnebula.simplejsonutil.exceptions.PrimitiveWrapperException;
 
 /**
@@ -23,6 +24,8 @@ import com.reactnebula.simplejsonutil.exceptions.PrimitiveWrapperException;
  * @author Charles
  */
 class JsonValue extends JsonData {
+    
+    protected StringBuilder sb = new StringBuilder();
     
     public void put(String name, byte number) {
         appendBeginning(name);
@@ -268,8 +271,10 @@ class JsonValue extends JsonData {
     
     @Override
     protected String writeLast() {
-        sb.deleteCharAt(sb.length()-2);
-        return write();
+        StringBuilder written = new StringBuilder();
+        written.append(write());
+        written.deleteCharAt(sb.length()-2);
+        return written.toString();
     }
     
     @Override
@@ -278,7 +283,9 @@ class JsonValue extends JsonData {
     }
     
     protected void appendBeginning(String name) {
-        sb.append(TAB);
+        if(name.isEmpty())
+            throw new InvalidNameException();
+        sb.append(indent);
         sb.append('"').append(name);
         sb.append(SEPERATOR);
     }

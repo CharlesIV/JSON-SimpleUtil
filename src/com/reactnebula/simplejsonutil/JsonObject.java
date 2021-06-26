@@ -1,162 +1,469 @@
-/*
- * Copyright (C) 2021 Charles
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package com.reactnebula.simplejsonutil;
 
 import com.reactnebula.simplejsonutil.exceptions.IncompatibleJsonObjectException;
+import com.reactnebula.simplejsonutil.exceptions.IncorrectParseTypeException;
+import com.reactnebula.simplejsonutil.exceptions.InvalidNameException;
+import com.reactnebula.simplejsonutil.exceptions.JsonValueNotFoundException;
+import com.reactnebula.simplejsonutil.exceptions.PrimitiveWrapperException;
 import java.util.ArrayList;
 
 /**
  *
  * @author Charles
  */
-public class JsonObject extends JsonValue {
+public class JsonObject extends JsonArrayable {
+    ArrayList<JsonData> data = new ArrayList<>();
+    String name;
+    private boolean lastPutObject = true;
     
-    ArrayList<JsonData> jObjects = new ArrayList<>();
-    ArrayList<Integer> jIndex = new ArrayList<>();
-    boolean isParsedObject;
-    private boolean insertedIndent;
-    private final String name;
-    
-    JsonObject(){
-        name = "";
-    }
+    JsonObject() {}
     
     public JsonObject(String name) {
+        if(name.isEmpty())
+            throw new InvalidNameException();
         this.name = name;
-        if(!name.equals(""))
-            sb.append(TAB).append('"').append(name).append(SEPERATOR);
-        sb.append("{\n");
-        indent = TAB;
-    }
-
-    static void insertIndent(JsonObject jo, String indent) {
-        if(indent.length()==0)
-            return;
-        String object = jo.sb.toString();
-        int index = object.indexOf("\n", 1);
-        int count = 1;
-        while(index!=-1) {
-            int nextIndex = object.indexOf("\n", index+1);
-            if(nextIndex==-1)
-                return;
-            
-            jo.sb.insert(index+count*indent.length(), indent);
-            count++;
-            
-            for(int i = 0; i < jo.jIndex.size(); i++) {
-                int jIndex = jo.jIndex.get(i);
-                if(jIndex > index)
-                    jo.jIndex.set(i, jIndex+indent.length());
-            }
-            index = nextIndex;
-        }
-    }
-    
-    public void putObject(JsonObject jo) {
-        jObjects.add(jo);
-        if(sb.charAt(sb.length()-2)!=',')
-            sb.append(",\n");
-        jIndex.add(sb.length());
-        jo.sb.insert(0, indent+TAB);
-        for(int i = 0; i < jo.jIndex.size();i++)
-            jo.jIndex.set(i, jo.jIndex.get(i)+indent.length()+1);
-        jo.indent = indent+TAB;
-        insertIndent(jo, indent);
-        jo.insertedIndent = true;
     }
     
     public JsonObject putObject(String name) {
         JsonObject jo = new JsonObject(name);
-        jo.sb.insert(0, indent);
-        jo.indent += indent;
-        jObjects.add(jo);
-        jIndex.add(sb.length());
+        jo.indent = jo.indent + indent;
+        data.add(jo);
+        lastPutObject = true;
         return jo;
+    }
+    
+    public void putObject(JsonObject jo) {
+        if(jo.name.isEmpty())
+            throw new InvalidNameException();
+        insertIndent(jo, indent);
+        data.add(jo);
+        lastPutObject = true;
+    }
+    
+    public void putObject(JsonObject jo, String name) {
+        if(jo.name.isEmpty())
+            throw new InvalidNameException();
+        insertIndent(jo, indent);
+        jo.name = name;
+        data.add(jo);
+        lastPutObject = true;
     }
     
     public JsonObjectArray putObjectArray(String name) {
         JsonObjectArray joa = new JsonObjectArray(name);
-        joa.sb.insert(0, indent);
-        joa.indent = indent+TAB;
-        jObjects.add(joa);
-        jIndex.add(sb.length());
+        joa.indent = joa.indent + indent;
+        data.add(joa);
+        lastPutObject = true;
         return joa;
     }
     
-    @Override
-    protected void appendBeginning(String name) {
-        sb.append(indent);
-        super.appendBeginning(name);
+    public void put(String name, byte number) {
+        if(lastPutObject) {
+            JsonValue jd = new JsonValue();
+            jd.indent = jd.indent+indent;
+            jd.put(name, number);
+            data.add(jd);
+            lastPutObject = false;
+        } else {
+            ((JsonValue)data.get(data.size()-1)).put(name, number);
+        }
+    }
+    
+    public void put(String name, short number) {
+        if(lastPutObject) {
+            JsonValue jd = new JsonValue();
+            jd.indent = jd.indent+indent;
+            jd.put(name, number);
+            data.add(jd);
+            lastPutObject = false;
+        } else {
+            ((JsonValue)data.get(data.size()-1)).put(name, number);
+        }
+    }
+    
+    public void put(String name, int number) {
+        if(lastPutObject) {
+            JsonValue jd = new JsonValue();
+            jd.indent = jd.indent+indent;
+            jd.put(name, number);
+            data.add(jd);
+            lastPutObject = false;
+        } else {
+            ((JsonValue)data.get(data.size()-1)).put(name, number);
+        }
+    }
+    
+    public void put(String name, float number) {
+        if(lastPutObject) {
+            JsonValue jd = new JsonValue();
+            jd.indent = jd.indent+indent;
+            jd.put(name, number);
+            data.add(jd);
+            lastPutObject = false;
+        } else {
+            ((JsonValue)data.get(data.size()-1)).put(name, number);
+        }
+    }
+    
+    public void put(String name, double number) {
+        if(lastPutObject) {
+            JsonValue jd = new JsonValue();
+            jd.indent = jd.indent+indent;
+            jd.put(name, number);
+            data.add(jd);
+            lastPutObject = false;
+        } else {
+            ((JsonValue)data.get(data.size()-1)).put(name, number);
+        }
+    }
+    
+    public void put(String name, long number) {
+        if(lastPutObject) {
+            JsonValue jd = new JsonValue();
+            jd.indent = jd.indent+indent;
+            jd.put(name, number);
+            data.add(jd);
+            lastPutObject = false;
+        } else {
+            ((JsonValue)data.get(data.size()-1)).put(name, number);
+        }
+    }
+    
+    public void put(String name, String string) {
+        if(lastPutObject) {
+            JsonValue jd = new JsonValue();
+            jd.indent = jd.indent+indent;
+            jd.put(name, string);
+            data.add(jd);
+            lastPutObject = false;
+        } else {
+            ((JsonValue)data.get(data.size()-1)).put(name, string);
+        }
+    }
+    
+    public void put(String name, boolean bool) {
+        if(lastPutObject) {
+            JsonValue jd = new JsonValue();
+            jd.indent = jd.indent+indent;
+            jd.put(name, bool);
+            data.add(jd);
+            lastPutObject = false;
+        } else {
+            ((JsonValue)data.get(data.size()-1)).put(name, bool);
+        }
+    }
+    
+    public void put(String name, char character) {
+        if(lastPutObject) {
+            JsonValue jd = new JsonValue();
+            jd.indent = jd.indent+indent;
+            jd.put(name, character);
+            data.add(jd);
+            lastPutObject = false;
+        } else {
+            ((JsonValue)data.get(data.size()-1)).put(name, character);
+        }
+    }
+    
+    public void put(String name, byte[] numbers) {
+        if(lastPutObject) {
+            JsonValue jd = new JsonValue();
+            jd.indent = jd.indent+indent;
+            jd.put(name, numbers);
+            data.add(jd);
+            lastPutObject = false;
+        } else {
+            ((JsonValue)data.get(data.size()-1)).put(name, numbers);
+        }
+    }
+    
+    public void put(String name, short[] numbers) {
+        if(lastPutObject) {
+            JsonValue jd = new JsonValue();
+            jd.indent = jd.indent+indent;
+            jd.put(name, numbers);
+            data.add(jd);
+            lastPutObject = false;
+        } else {
+            ((JsonValue)data.get(data.size()-1)).put(name, numbers);
+        }
+    }
+    
+    public void put(String name, int[] numbers) {
+        if(lastPutObject) {
+            JsonValue jd = new JsonValue();
+            jd.indent = jd.indent+indent;
+            jd.put(name, numbers);
+            data.add(jd);
+            lastPutObject = false;
+        } else {
+            ((JsonValue)data.get(data.size()-1)).put(name, numbers);
+        }
+    }
+    
+    public void put(String name, float[] numbers) {
+        if(lastPutObject) {
+            JsonValue jd = new JsonValue();
+            jd.indent = jd.indent+indent;
+            jd.put(name, numbers);
+            data.add(jd);
+            lastPutObject = false;
+        } else {
+            ((JsonValue)data.get(data.size()-1)).put(name, numbers);
+        }
+    }
+    
+    public void put(String name, double[] numbers) {
+        if(lastPutObject) {
+            JsonValue jd = new JsonValue();
+            jd.indent = jd.indent+indent;
+            jd.put(name, numbers);
+            data.add(jd);
+            lastPutObject = false;
+        } else {
+            ((JsonValue)data.get(data.size()-1)).put(name, numbers);
+        }
+    }
+    
+    public void put(String name, long[] numbers) {
+        if(lastPutObject) {
+            JsonValue jd = new JsonValue();
+            jd.indent = jd.indent+indent;
+            jd.put(name, numbers);
+            data.add(jd);
+            lastPutObject = false;
+        } else {
+            ((JsonValue)data.get(data.size()-1)).put(name, numbers);
+        }
+    }
+    
+    public void put(String name) {
+        if(lastPutObject) {
+            JsonValue jd = new JsonValue();
+            jd.indent = jd.indent+indent;
+            jd.put(name);
+            data.add(jd);
+            lastPutObject = false;
+        } else {
+            ((JsonValue)data.get(data.size()-1)).put(name);
+        }
+    }
+    
+    public void put(String name, String[] strings) {
+        if(lastPutObject) {
+            JsonValue jd = new JsonValue();
+            jd.indent = jd.indent+indent;
+            jd.put(name, strings);
+            data.add(jd);
+            lastPutObject = false;
+        } else {
+            ((JsonValue)data.get(data.size()-1)).put(name, strings);
+        }
+    }
+    
+    public void put(String name, boolean[] bools) {
+        if(lastPutObject) {
+            JsonValue jd = new JsonValue();
+            jd.indent = jd.indent+indent;
+            jd.put(name, bools);
+            data.add(jd);
+            lastPutObject = false;
+        } else {
+            ((JsonValue)data.get(data.size()-1)).put(name, bools);
+        }
+    }
+    
+    public void put(String name, char[] characters) {
+        if(lastPutObject) {
+            JsonValue jd = new JsonValue();
+            jd.indent = jd.indent+indent;
+            jd.put(name, characters);
+            data.add(jd);
+            lastPutObject = false;
+        } else {
+            ((JsonValue)data.get(data.size()-1)).put(name, characters);
+        }
     }
     
     /**
-     * Creates an object from the data in this JsonObject 
-     * @param factory defines how a JsonObject should be converted to an object
-     * @return an object that is the same type as defined by the factory
-     * @throws IncompatibleJsonObjectException 
+     * Used to insert a generic type. Generic type must be either a primitive wrapper or String.
+     * 
+     * @param name
+     * @param obj a generic object which can be cast to a primitive wrapper or String. Null is not supported.
+     * @throws PrimitiveWrapperException when obj cannot be cast to a primitive wrapper or String
      */
+    public void putGenericPrimitive(String name, Object obj) throws PrimitiveWrapperException {
+        if(lastPutObject) {
+            JsonValue jd = new JsonValue();
+            jd.indent = jd.indent+indent;
+            jd.putGenericPrimitive(name, obj);
+            data.add(jd);
+            lastPutObject = false;
+        } else {
+            ((JsonValue)data.get(data.size()-1)).putGenericPrimitive(name, obj);
+        }
+    }
+
     public Object toObject(ObjectFactory factory) throws IncompatibleJsonObjectException {
         return factory.fromJson(this);
     }
     
-    /**
-     * A method that returns an exact copy of the current 
-     * JsonObject at the time of calling this method.
-     * 
-     * @return a new JsonObject
-     */
-    public JsonObject copyOf() {
-        JsonObject jo = new JsonObject("");
-        jo.jObjects.addAll(jObjects);
-        jo.jIndex.addAll(jIndex);
-        jo.sb = new StringBuilder();
-        jo.indent = indent;
-        jo.sb.append(sb);
+    static void insertIndent(JsonObject jo, String indent) {
+        if(indent.length()==0)
+            return;
+        jo.indent = jo.indent + indent;
+        for(JsonData jd : jo.data) {
+            jd.indent = jd.indent + indent;
+            if(jd instanceof JsonValue) {
+                StringBuilder json = ((JsonValue)jd).sb;
+                int index = 0;
+                while(index != -1) {
+                    json.insert(index+1, indent);
+                    index = json.indexOf(VALUE_BREAK, index+indent.length()+1);
+                }
+            } else if(jd instanceof JsonObject) {
+                insertIndent(((JsonObject)jd), indent);
+            } else if(jd instanceof JsonObjectArray) {
+                JsonObjectArray.insertIndent((JsonObjectArray)jd, indent);
+            }
+        }
+    }
+    
+    static JsonObject fromJSON(String json) {
+        JsonObject jo = fromJSON(json, "temp");
+        jo.name = "";
+        return jo;
+    }
+    
+    public static JsonObject fromJSON(String json, String name) {
+        JsonObject jo = new JsonObject(name);
+        JsonParser parser = new JsonParser(json);
+        String[] names = parser.parseValues();
+        for(String n : names) {
+            try {
+                String value = parser.parseStringedValue(n);
+                if(value.toLowerCase().equals("null"))
+                    jo.put(n);
+                else if(value.toLowerCase().equals("true"))
+                    jo.put(n, true);
+                else if(value.toLowerCase().equals("false"))
+                    jo.put(n, false);
+                else {
+                    try {
+                        jo.put(n, Long.valueOf(value));
+                        continue;
+                    } catch(NumberFormatException e) {
+                        try {
+                            jo.put(n, Double.valueOf(value));
+                            continue;
+                        } catch(NumberFormatException ex) {}
+                    }
+                }
+                
+                if(value.length()==1)
+                    jo.put(n, value.charAt(0));
+                
+                else if(value.startsWith("[")) {
+                    String[] arrayValues = value.substring(1, value.length()-1).split(",");
+                    if(arrayValues.length==0)
+                        jo.put(n, new int[0]);
+                    String testValue = arrayValues[0].trim();
+                    if(testValue.equals("true") || testValue.equals("false")) {
+                        boolean[] bools = new boolean[arrayValues.length];
+                        for(int i = 0; i < bools.length; i++)
+                            bools[i] = Boolean.valueOf(arrayValues[i]);
+                        jo.put(n, bools);
+                    } else {
+                        try {
+                            Long.valueOf(testValue);
+                            long[] nums = new long[arrayValues.length];
+                            for(int i = 0; i < nums.length; i++)
+                                nums[i] = Long.valueOf(arrayValues[i].trim());
+                            jo.put(n, nums);
+                            continue;
+                        } catch(NumberFormatException e) {
+                            try {
+                                Double.valueOf(testValue);
+                                double[] nums = new double[arrayValues.length];
+                                for(int i = 0; i < nums.length; i++)
+                                    nums[i] = Double.valueOf(arrayValues[i]);
+                                jo.put(n, nums);
+                                continue;
+                            } catch(NumberFormatException ex) {}
+                        }
+                    }
+                    if(testValue.length()==1) {
+                        char[] chars = new char[arrayValues.length];
+                        for(int i = 0; i < chars.length; i++)
+                            jo.put(n, chars);
+                        continue;
+                    } else {
+                        try {
+                            JsonObject[] objArray = parser.parseObjectArray(n);
+                            JsonObjectArray joa = jo.putObjectArray(n);
+                            for(JsonObject obj : objArray)
+                                joa.putObject(obj, n);
+                            continue;
+                        } catch(IncorrectParseTypeException | JsonValueNotFoundException ex) {}
+                    }
+                    jo.put(n, arrayValues);
+                }
+                
+                try {
+                    jo.put(n, parser.parseString(n));
+                    continue;
+                } catch(IncorrectParseTypeException e) {}
+                
+                try {
+                    jo.putObject(parser.parseObject(n), n);
+                } catch(IncorrectParseTypeException | JsonValueNotFoundException e) {}
+                
+            } catch(JsonValueNotFoundException e) {}
+        }
         return jo;
     }
     
     @Override
-    protected String writeLast() {
-        String written = write();
-        if(!isParsedObject)
-            return written.substring(0, written.length()-2).concat("\n");
-        return written;
+    protected String writeNameless() {
+        StringBuilder written = new StringBuilder();
+        written.append(writeLastNameless());
+        written.insert(written.length()-1, ',');
+        return written.toString();
+    }
+    
+    @Override
+    protected String writeLastNameless() {
+        StringBuilder written = new StringBuilder();
+        written.append(indent).append("{\n");
+        for(JsonData jd : data) {
+            if(data.indexOf(jd)==data.size()-1)
+                written.append(jd.writeLast());
+            else
+                written.append(jd.write());
+        }
+        written.append(indent).append("}\n");
+        return written.toString();
     }
     
     @Override
     protected String write() {
         StringBuilder written = new StringBuilder();
-        written.append(sb);
-        
-        int posOffset = 0;
-        for(int i = 0; i < jObjects.size(); i++) {
-            String object = jObjects.get(i).write();
-            written.insert(jIndex.get(i)+posOffset, object);
-            posOffset+=object.length();
+        written.append(writeLast());
+        written.insert(written.length()-1, ',');
+        return written.toString();
+    }
+
+    @Override
+    protected String writeLast() {
+        StringBuilder written = new StringBuilder();
+        written.append(indent).append("\"").append(name).append(SEPERATOR).append("{\n");
+        for(JsonData jd : data) {
+            if(data.indexOf(jd)==data.size()-1)
+                written.append(jd.writeLast());
+            else
+                written.append(jd.write());
         }
-        int index = written.indexOf("{");
-        if(!written.toString().substring(index).replace('{', ' ').trim().isEmpty()) //can replace with isBlank() in newer version
-            written.deleteCharAt(written.length()-2);
-        
-        written.append(indent);
-        if(insertedIndent)
-            written.append(TAB);
-        if(!isParsedObject)
-            written.append("},\n");
+        written.append(indent).append("}\n");
         return written.toString();
     }
 }

@@ -17,84 +17,61 @@
 package com.reactnebula.simplejsonutil;
 
 import com.reactnebula.simplejsonutil.exceptions.IncompatibleJsonObjectException;
-import com.reactnebula.simplejsonutil.exceptions.JsonValueNotFoundException;
+import com.reactnebula.simplejsonutil.exceptions.InvalidNameException;
 import java.util.ArrayList;
 
 /**
  *
  * @author Charles
  */
-public class JsonObjectArray extends JsonData {
+public class JsonObjectArray extends JsonArrayable {
     
-    ArrayList<JsonData> jObjects = new ArrayList<>();
-    private final String name;
-    
-    private JsonObjectArray() {
-        sb.append("[\n");
-        name = "";
-    }
+    ArrayList<JsonArrayable> jObjects = new ArrayList<>();
+    private String name;
     
     JsonObjectArray(String name) {
+        if(name.isEmpty())
+            throw new InvalidNameException();
         this.name = name;
-        sb.append(indent);
-        sb.append('"').append(name).append('"');
-        sb.append(":");
-        sb.append("[\n");
-    }
-    
-    static void insertIndent(JsonObjectArray jo, String indent) {
-        if(indent.length()==0)
-            return;
-        String object = jo.sb.toString();
-        int index = object.indexOf("\n", 1);
-        int count = 1;
-        while(index!=-1) {
-            int nextIndex = object.indexOf("\n", index+1);
-            if(nextIndex==-1)
-                return;
-            
-            jo.sb.insert(index+count*indent.length(), indent);
-            count++;
-            index = nextIndex;
-        }
     } 
     
     public JsonObject putObject() {
-        JsonObject jo = new JsonObject("");
-        jo.sb.insert(0, indent);
-        jo.indent=indent;
+        JsonObject jo = new JsonObject();
+        jo.indent = jo.indent+indent;
+        jObjects.add(jo);
+        return jo;
+    }
+    
+    public JsonObject putObject(String name) {
+        JsonObject jo = new JsonObject(name);
+        jo.indent = jo.indent+indent;
         jObjects.add(jo);
         return jo;
     }
     
     public void putObject(JsonObject jo) {
-        int beginning = jo.sb.indexOf("{");
-        jo.sb.replace(0, beginning, "");
-        jo.sb.insert(0, indent);
-        jo.indent=indent;
-        
-        for(int i = 0; i < jo.jIndex.size(); i++)
-            jo.jIndex.set(i, jo.jIndex.get(i)-(beginning-indent.length()));
-        
-        JsonObject.insertIndent(jo, indent.substring(0, indent.length()-1));
-        for(int i = 0; i < jo.jIndex.size(); i++) {
-            JsonData jd = jo.jObjects.get(i);
-            if(jd instanceof JsonObject)
-                JsonObject.insertIndent((JsonObject)jd, indent.substring(0, indent.length()-1));
-        }
+        JsonObject.insertIndent(jo, indent);
         jObjects.add(jo);
     }
     
-    public JsonObjectArray putObjectArray() {
-        JsonObjectArray joa = new JsonObjectArray();
-        joa.sb.insert(0, indent);
-        joa.indent = indent+TAB;
+    public void putObject(JsonObject jo, String name) {
+        if(name.isEmpty())
+            throw new InvalidNameException();
+        JsonObject.insertIndent(jo, indent);
+        jo.name = name;
+        jObjects.add(jo);
+    }
+    
+    public JsonObjectArray putObjectArray(String name) {
+        JsonObjectArray joa = new JsonObjectArray(name);
+        joa.indent = joa.indent + indent;
         jObjects.add(joa);
         return joa;
     }
     
-    public void putObjectArray(JsonObjectArray joa) {
+    public void putObjectArray(JsonObjectArray joa, String name) {
         insertIndent(joa, indent);
+        joa.name = name;
         jObjects.add(joa);
     }
     
@@ -107,47 +84,63 @@ public class JsonObjectArray extends JsonData {
     }
     
     public JsonObject[] toJsonObjects() {
-        JsonParser p = new JsonParser();
-        p.json = writeLast();
-        boolean blank = name.isEmpty();
-        
-        try {
-            if(blank)  {
-                sb.insert(0, "\"temp\":");
-                return p.parseObjectArray("temp");
-            }
-            return p.parseObjectArray(name);
-        } catch(JsonValueNotFoundException e) {}
-        finally {
-            if(blank)
-                sb.subSequence(7, sb.length());
-        }
+        //to do
         return new JsonObject[0];
+    }
+    
+    static void insertIndent(JsonObjectArray joa, String indent) {
+        if(indent.length()==0)
+            return;
+        joa.indent = joa.indent + indent;
+        for(JsonArrayable jd : joa.jObjects) {
+            jd.indent = jd.indent + indent;
+            if(jd instanceof JsonObject) {
+                JsonObject.insertIndent(((JsonObject)jd), indent);
+            } else {
+                insertIndent((JsonObjectArray)jd, indent);
+            }
+        }
+    }
+    
+    @Override
+    protected String writeNameless() {
+        StringBuilder written = new StringBuilder();
+        written.append(writeLastNameless());
+        written.insert(written.length()-1, ',');
+        return written.toString();
+    }
+    
+    @Override
+    protected String writeLastNameless() {
+        StringBuilder written = new StringBuilder();
+        written.append('[');
+        jObjects.forEach(jo -> {
+            if(jo == jObjects.get(jObjects.size()-1)) 
+                written.append(jo.writeLastNameless());
+            else
+                written.append(jo.writeNameless());
+        });
+        written.append(indent).append("]\n");
+        return written.toString();
     }
     
     @Override
     protected String write() {
         StringBuilder written = new StringBuilder();
-        written.append(sb);
-        jObjects.forEach(jo -> {
-            if(jo == jObjects.get(jObjects.size()-1)) 
-                written.append(jo.writeLast());
-            else
-                written.append(jo.write());
-        });
-        written.append(indent).append("],\n");
+        written.append(writeLast());
+        written.insert(written.length()-1, ',');
         return written.toString();
     }
     
     @Override
     protected String writeLast() {
         StringBuilder written = new StringBuilder();
-        written.append(sb);
+        written.append(indent).append('\"').append(name).append(ARRAY_SEPERATOR).append('\n');
         jObjects.forEach(jo -> {
             if(jo == jObjects.get(jObjects.size()-1)) 
-                written.append(jo.writeLast());
+                written.append(jo.writeLastNameless());
             else
-                written.append(jo.write());
+                written.append(jo.writeNameless());
         });
         written.append(indent).append("]\n");
         return written.toString();

@@ -73,10 +73,7 @@ public class JsonParser {
      * @param jo 
      */
     public JsonParser(JsonObject jo) {
-        if(jo.isParsedObject)
-            json = jo.sb.toString();
-        else
-            json = jo.writeLast();
+        json = jo.writeLastNameless();
         init();
     }
     
@@ -96,7 +93,7 @@ public class JsonParser {
                 depthMap.put(i, currentDepth);
             }
         }
-        if(currentDepth != 0)
+        if(currentDepth != 0) 
             throw new InvalidJsonException("Unmatched {} or []", json);
     }
     
@@ -113,7 +110,7 @@ public class JsonParser {
      * @param jo 
      */
     public JsonParser setParser(JsonObject jo) {
-        json = jo.sb.toString() + "\n}";
+        json = jo.writeLastNameless();
         init();
         return this;
     }
@@ -659,14 +656,9 @@ public class JsonParser {
         String object = parseStringedValue(name);
         if(object.equals("null"))
             return null;
-        JsonObject jo = new JsonObject();
-        try {
-            jo.sb.append(object.trim());
-            jo.isParsedObject = true;
-        } catch(StringIndexOutOfBoundsException e) {
-            throw new IncorrectParseTypeException("JsonObject", object);
-        }
-        return jo;
+        if(!object.contains("{"))
+            throw new IncorrectParseTypeException("Object", object);
+        return JsonObject.fromJSON(object, name);
     }
     
     public JsonObject[] parseObjectArray(String name) throws JsonValueNotFoundException {
@@ -694,13 +686,11 @@ public class JsonParser {
         } while (objectIndex != -1);
         indexes.add(array.length());
         
-        JsonObject[] jObjects = new JsonObject[indexes.size()];
+        JsonObject[] jObjects = new JsonObject[indexes.size()-1];
         int lastIndex = 0;
-        for(int i = 0; i < indexes.size(); i++) {
-            JsonObject temp = new JsonObject();
-            temp.sb.append(array.subSequence(lastIndex, indexes.get(i)));
-            temp.isParsedObject = true;
-            jObjects[i] = temp;
+        for(int i = 0; i < indexes.size()-1; i++) {
+            String json = array.subSequence(lastIndex, indexes.get(i)).toString();
+            jObjects[i] = JsonObject.fromJSON(json);
             lastIndex = indexes.get(i);
         }
         return jObjects;

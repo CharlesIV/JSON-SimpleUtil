@@ -16,6 +16,7 @@
  */
 package com.reactnebula.simplejsonutil;
 
+import com.reactnebula.simplejsonutil.exceptions.InvalidNameException;
 import com.reactnebula.simplejsonutil.exceptions.PrimitiveWrapperException;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -37,6 +38,13 @@ public class JsonWriter {
     }
     
     public void putObject(JsonObject jo) {
+        if(jo.name.isEmpty())
+            throw new InvalidNameException();
+        data.add(jo);
+    }
+    
+    public void putObject(JsonObject jo, String name) {
+        jo.name = name;
         data.add(jo);
     }
     
@@ -208,17 +216,22 @@ public class JsonWriter {
      * @param jp the JsonParser to write the data to.
      */
     public void write(JsonParser jp) {
-        StringBuilder sb = new StringBuilder();
-        if(data.size() != 1 || !(data.get(0) instanceof JsonObject))
-            sb.append("{\n");
-        for(JsonData jd : data)
+        StringBuilder writer = new StringBuilder();
+        if(data.size() == 1 && data.get(0) instanceof JsonObject) {
+            writer.append(((JsonObject)data.get(0)).writeLastNameless());
+            return;
+        }
+
+        writer.append("{\n");
+        for(JsonData jd : data) {
             if(data.indexOf(jd)==data.size()-1)
-                sb.append(jd.writeLast());
+                writer.append(jd.writeLast());
             else
-                sb.append(jd.write());
-        if(data.size() != 1 || !(data.get(0) instanceof JsonObject))
-            sb.append("}");
-        jp.json = sb.toString();
+                writer.append(jd.write());
+        }
+        writer.append("}");
+        
+        jp.json = writer.toString();
         jp.init();
     }
     
@@ -234,15 +247,19 @@ public class JsonWriter {
      */
     public String write() {
         StringBuilder writer = new StringBuilder();
-        if(data.size() != 1 || !(data.get(0) instanceof JsonObject))
-            writer.append("{\n");
-        for(JsonData jd : data)
+        if(data.size() == 1 && data.get(0) instanceof JsonObject) {
+            writer.append(((JsonObject)data.get(0)).writeLastNameless());
+            return writer.toString();
+        }
+
+        writer.append("{\n");
+        for(JsonData jd : data) {
             if(data.indexOf(jd)==data.size()-1)
                 writer.append(jd.writeLast());
             else
                 writer.append(jd.write());
-        if(data.size() != 1 || !(data.get(0) instanceof JsonObject))
-            writer.append("}");
+        }
+        writer.append("}");
         return writer.toString();
     }
     
@@ -263,15 +280,19 @@ public class JsonWriter {
      */
     public void write(File file) throws IOException {
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            if(data.size() != 1 || !(data.get(0) instanceof JsonObject))
-                writer.append("{\n");
-            for(JsonData jd : data)
+            if(data.size() == 1 && data.get(0) instanceof JsonObject) {
+                writer.append(((JsonObject)data.get(0)).writeLastNameless());
+                return;
+            }
+            
+            writer.append("{\n");
+            for(JsonData jd : data) {
                 if(data.indexOf(jd)==data.size()-1)
                     writer.append(jd.writeLast());
                 else
                     writer.append(jd.write());
-            if(data.size() != 1 || !(data.get(0) instanceof JsonObject))
-                writer.append("}");
+            }
+            writer.append("}");
         }
     }
     
