@@ -684,12 +684,12 @@ public class JsonParser {
             if(objectIndex != -1)
                 indexes.add(objectIndex);
         } while (objectIndex != -1);
-        indexes.add(array.length());
+        indexes.add(array.length()-1);
         
-        JsonObject[] jObjects = new JsonObject[indexes.size()-1];
+        JsonObject[] jObjects = new JsonObject[indexes.size()];
         int lastIndex = 0;
-        for(int i = 0; i < indexes.size()-1; i++) {
-            String json = array.subSequence(lastIndex, indexes.get(i)).toString();
+        for(int i = 0; i < indexes.size(); i++) {
+            String json = array.substring(lastIndex, indexes.get(i));
             jObjects[i] = JsonObject.fromJSON(json);
             lastIndex = indexes.get(i);
         }
