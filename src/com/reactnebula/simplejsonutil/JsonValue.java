@@ -23,9 +23,8 @@ import com.reactnebula.simplejsonutil.exceptions.PrimitiveWrapperException;
  *
  * @author Charles
  */
-class JsonValue extends JsonData {
-    
-    protected StringBuilder sb = new StringBuilder();
+public class JsonValue extends JsonData {
+    final StringBuilder sb = new StringBuilder();
     
     public void put(String name, byte number) {
         appendBeginning(name);
@@ -267,6 +266,14 @@ class JsonValue extends JsonData {
         if(string.contains("\b"))
             string = string.replace("\b", "\\\b");
         return string;
+    }
+    
+    @Override
+    public JsonValue copyOf() {
+        JsonValue jv = new JsonValue();
+        jv.sb.append(sb);
+        jv.indent = indent;
+        return jv;
     }
     
     @Override

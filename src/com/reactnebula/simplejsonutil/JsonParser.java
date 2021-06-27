@@ -19,7 +19,6 @@ package com.reactnebula.simplejsonutil;
 import static com.reactnebula.simplejsonutil.JsonData.ARRAY_SEPERATOR;
 import static com.reactnebula.simplejsonutil.JsonData.SEPERATOR;
 import static com.reactnebula.simplejsonutil.JsonData.STRING_ARRAY_SEPERATOR;
-import static com.reactnebula.simplejsonutil.JsonData.TAB;
 import static com.reactnebula.simplejsonutil.JsonData.VALUE_BREAK;
 import com.reactnebula.simplejsonutil.exceptions.IncorrectParseTypeException;
 import com.reactnebula.simplejsonutil.exceptions.InvalidJsonException;
@@ -652,6 +651,14 @@ public class JsonParser {
         return result;
     }
     
+    public JsonObject parseObject(String name, JsonObject defaultObject) {
+        try {
+            return parseObject(name);
+        } catch(JsonValueNotFoundException e) {
+            return defaultObject;
+        }
+    }
+    
     public JsonObject parseObject(String name) throws JsonValueNotFoundException {
         String object = parseStringedValue(name);
         if(object.equals("null"))
@@ -659,6 +666,14 @@ public class JsonParser {
         if(!object.contains("{"))
             throw new IncorrectParseTypeException("Object", object);
         return JsonObject.fromJSON(object, name);
+    }
+    
+    public JsonObject[] parseObjectArray(String name, JsonObject... defaultObjects) {
+        try {
+            return parseObjectArray(name);
+        } catch(JsonValueNotFoundException e) {
+            return defaultObjects;
+        }
     }
     
     public JsonObject[] parseObjectArray(String name) throws JsonValueNotFoundException {

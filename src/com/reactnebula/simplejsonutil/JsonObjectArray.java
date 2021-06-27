@@ -26,7 +26,7 @@ import java.util.ArrayList;
  */
 public class JsonObjectArray extends JsonArrayable {
     
-    ArrayList<JsonArrayable> jObjects = new ArrayList<>();
+    private final ArrayList<JsonArrayable> jObjects = new ArrayList<>();
     private String name;
     
     JsonObjectArray(String name) {
@@ -144,5 +144,26 @@ public class JsonObjectArray extends JsonArrayable {
         });
         written.append(indent).append("]\n");
         return written.toString();
+    }
+    
+    /**
+     * A method that returns an exact copy of the current 
+     * JsonObjectArray at the time of calling this method.
+     * 
+     * @return a new JsonObjectArray
+     */
+    @Override
+    public JsonObjectArray copyOf() {
+        JsonObjectArray joa = new JsonObjectArray(name);
+        joa.indent = indent;
+        jObjects.forEach(jo->{
+            joa.jObjects.add((JsonArrayable)jo.copyOf());
+        });
+        return joa;
+    }
+    
+    @Override
+    public String toString() {
+        return writeLastNameless();
     }
 }

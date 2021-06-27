@@ -29,7 +29,7 @@ import java.util.ArrayList;
  * @author Charles
  */
 public class JsonWriter {
-    ArrayList<JsonData> data = new ArrayList<>();
+    private final ArrayList<JsonData> data = new ArrayList<>();
     
     public JsonObject putObject(String name) {
         JsonObject jo = new JsonObject(name);
@@ -194,10 +194,9 @@ public class JsonWriter {
      */
     public JsonWriter copyOf() {
         JsonWriter jw = new JsonWriter();
-        ArrayList<JsonData> array = new ArrayList<>();
-        for(JsonData jd : data)
-            array.add(jd);
-        jw.data = array;
+        data.forEach(jd -> {
+            jw.data.add(jd.copyOf());
+        });
         return jw;
     }
     
@@ -212,7 +211,7 @@ public class JsonWriter {
     }
     
     /**
-     * Writes the JSON stored in the writer to the JsonParser. If the resetOnWrite flag has not been set, then this does not reset the writer after writing.
+     * Writes the JSON stored in the writer to the JsonParser.
      * @param jp the JsonParser to write the data to.
      */
     public void write(JsonParser jp) {
@@ -273,7 +272,7 @@ public class JsonWriter {
     }
     
     /**
-     * Used to write a file to the system in JSON format. If the resetOnWrite flag has not been set, then this does not reset the writer after writing.
+     * Used to write a file to the system in JSON format.
      * 
      * @param file 
      * @throws IOException 

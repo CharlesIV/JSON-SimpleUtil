@@ -12,10 +12,13 @@ import java.util.ArrayList;
  * @author Charles
  */
 public class JsonObject extends JsonArrayable {
-    ArrayList<JsonData> data = new ArrayList<>();
+    private final ArrayList<JsonData> data = new ArrayList<>();
     String name;
     private boolean lastPutObject = true;
     
+    /**
+     * Internally used constructor
+     */
     JsonObject() {}
     
     public JsonObject(String name) {
@@ -303,7 +306,34 @@ public class JsonObject extends JsonArrayable {
             ((JsonValue)data.get(data.size()-1)).putGenericPrimitive(name, obj);
         }
     }
-
+    
+    /**
+     * A method that returns an exact copy of the current 
+     * JsonObject at the time of calling this method.
+     * 
+     * @return a new JsonObject
+     */
+    @Override
+    public JsonObject copyOf() {
+        JsonObject jo;
+        if(!name.isEmpty())
+            jo = new JsonObject(name);
+        else {
+            jo = new JsonObject();
+        }
+        jo.indent = indent;
+        data.forEach(jd->{
+            jo.data.add(jd.copyOf());
+        });
+        return jo;
+    }
+    
+    /**
+     * Returns an Object from the current JsonObject using the provided ObjectFactory.
+     * @param factory
+     * @return a Object whose type can be be cast to that of the factory's return type.
+     * @throws IncompatibleJsonObjectException 
+     */
     public Object toObject(ObjectFactory factory) throws IncompatibleJsonObjectException {
         return factory.fromJson(this);
     }
@@ -329,12 +359,24 @@ public class JsonObject extends JsonArrayable {
         }
     }
     
-    static JsonObject fromJSON(String json) {
+    /**
+     * Takes a JSON String and converts it into a JsonObject without a given name. 
+     * Adding the JsonObject to a writer will require that its name be specified.
+     * @param json used to create JsonObject
+     * @return 
+     */
+    public static JsonObject fromJSON(String json) {
         JsonObject jo = fromJSON(json, "temp");
         jo.name = "";
         return jo;
     }
     
+    /**
+     * Takes a JSON String and converts it into a JsonObject.
+     * @param json used to create JsonObject
+     * @param name the name given to the JsonObject
+     * @return 
+     */
     public static JsonObject fromJSON(String json, String name) {
         JsonObject jo = new JsonObject(name);
         JsonParser parser = new JsonParser(json);
@@ -465,5 +507,10 @@ public class JsonObject extends JsonArrayable {
         }
         written.append(indent).append("}\n");
         return written.toString();
+    }
+    
+    @Override
+    public String toString() {
+        return writeLastNameless();
     }
 }

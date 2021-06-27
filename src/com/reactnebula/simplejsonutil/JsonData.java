@@ -31,4 +31,21 @@ public abstract class JsonData {
     
     protected abstract String write();
     protected abstract String writeLast();
+    
+    /**
+     * A method that returns an exact copy of the current 
+     * JSON at the time of calling this method.
+     * 
+     * @return a new object
+     */
+    public abstract JsonData copyOf();
+    
+    /**
+     * Overridden method that returns a String with the JSON stored by the object.
+     * @return 
+     */
+    @Override
+    public String toString() {
+        return writeLast();
+    }
 }
