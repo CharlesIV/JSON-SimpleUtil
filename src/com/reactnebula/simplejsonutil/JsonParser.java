@@ -96,8 +96,25 @@ public class JsonParser {
             throw new InvalidJsonException("Unmatched {} or []", json);
     }
     
-    public JsonParser setParser(String file) throws IOException {
-        json = new String(Files.readAllBytes(Paths.get(file)));
+    /**
+     * Replaces the JSON in the parser with that read from the file.
+     * @param file
+     * @return the current JsonParser instance
+     * @throws IOException 
+     */
+    public JsonParser setParser(File file) throws IOException {
+        json = new String(Files.readAllBytes(file.toPath()));
+        init();
+        return this;
+    }
+    
+    /**
+     * Replaces the JSON in the parser with that passed in.
+     * @param json
+     * @return the current JsonParser instance
+     */
+    public JsonParser setParser(String json) {
+        this.json = json;
         init();
         return this;
     }
@@ -107,6 +124,7 @@ public class JsonParser {
      * discarding the JsonObject. Any changes to the object after the
      * parser is set will not appear in the parser.
      * @param jo 
+     * @return the current JsonParser instance
      */
     public JsonParser setParser(JsonObject jo) {
         json = jo.writeLastNameless();
