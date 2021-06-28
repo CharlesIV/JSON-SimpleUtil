@@ -1,171 +1,129 @@
 /*
- * Copyright (C) 2021 Charles
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
  */
 package com.reactnebula.simplejsonutil;
 
-import com.reactnebula.simplejsonutil.exceptions.InvalidNameException;
+import com.reactnebula.simplejsonutil.exceptions.JsonValueNotFoundException;
 import com.reactnebula.simplejsonutil.exceptions.PrimitiveWrapperException;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.stream.Stream;
+import java.util.stream.Stream.Builder;
 
 /**
  *
  * @author Charles
  */
 public class JsonWriter {
-    private final ArrayList<JsonData> data = new ArrayList<>();
+    private JsonObject data;
+    
+    public JsonWriter() {
+        data = new JsonObject();
+    }
+    
+    public JsonWriter(JsonObject object) {
+        data = object;
+    }
     
     public JsonObject putObject(String name) {
-        JsonObject jo = new JsonObject(name);
-        data.add(jo);
-        return jo;
+        return data.putObject(name);
+    }
+    
+    public void putObject(Stringifiable s) {
+        data.putObject(s);
     }
     
     public void putObject(JsonObject jo) {
-        if(jo.name.isEmpty())
-            throw new InvalidNameException();
-        data.add(jo);
+        data.putObject(jo);
     }
     
-    public void putObject(JsonObject jo, String name) {
-        jo.name = name;
-        data.add(jo);
+    public void putObject(String name, JsonObject jo) {
+        data.putObject(name, jo);
     }
     
     public JsonObjectArray putObjectArray(String name) {
-        JsonObjectArray joa = new JsonObjectArray(name);
-        data.add(joa);
-        return joa;
+        return data.putObjectArray(name);
     }
     
     public void put(String name, byte number) {
-        JsonValue jd = new JsonValue();
-        jd.put(name, number);
-        data.add(jd);
+        data.put(name, number);
     }
     
     public void put(String name, short number) {
-        JsonValue jd = new JsonValue();
-        jd.put(name, number);
-        data.add(jd);
+        data.put(name, number);
     }
     
     public void put(String name, int number) {
-        JsonValue jd = new JsonValue();
-        jd.put(name, number);
-        data.add(jd);
+        data.put(name, number);
     }
     
     public void put(String name, float number) {
-        JsonValue jd = new JsonValue();
-        jd.put(name, number);
-        data.add(jd);
+        data.put(name, number);
     }
     
     public void put(String name, double number) {
-        JsonValue jd = new JsonValue();
-        jd.put(name, number);
-        data.add(jd);
+        data.put(name, number);
     }
     
     public void put(String name, long number) {
-        JsonValue jd = new JsonValue();
-        jd.put(name, number);
-        data.add(jd);
+        data.put(name, number);
     }
     
     public void put(String name, String string) {
-        JsonValue jd = new JsonValue();
-        jd.put(name, string);
-        data.add(jd);
+        data.put(name, string);
     }
     
     public void put(String name, boolean bool) {
-        JsonValue jd = new JsonValue();
-        jd.put(name, bool);
-        data.add(jd);
+        data.put(name, bool);
     }
     
     public void put(String name, char character) {
-        JsonValue jd = new JsonValue();
-        jd.put(name, character);
-        data.add(jd);
+        data.put(name, character);
     }
     
     public void put(String name, byte[] numbers) {
-        JsonValue jd = new JsonValue();
-        jd.put(name, numbers);
-        data.add(jd);
+        data.put(name, numbers);
     }
     
     public void put(String name, short[] numbers) {
-        JsonValue jd = new JsonValue();
-        jd.put(name, numbers);
-        data.add(jd);
+        data.put(name, numbers);
     }
     
     public void put(String name, int[] numbers) {
-        JsonValue jd = new JsonValue();
-        jd.put(name, numbers);
-        data.add(jd);
+        data.put(name, numbers);
     }
     
     public void put(String name, float[] numbers) {
-        JsonValue jd = new JsonValue();
-        jd.put(name, numbers);
-        data.add(jd);
+        data.put(name, numbers);
     }
     
     public void put(String name, double[] numbers) {
-        JsonValue jd = new JsonValue();
-        jd.put(name, numbers);
-        data.add(jd);
+        data.put(name, numbers);
     }
     
     public void put(String name, long[] numbers) {
-        JsonValue jd = new JsonValue();
-        jd.put(name, numbers);
-        data.add(jd);
+        data.put(name, numbers);
     }
     
     public void put(String name) {
-        JsonValue jd = new JsonValue();
-        jd.put(name);
-        data.add(jd);
+        data.put(name);
     }
     
     public void put(String name, String[] strings) {
-        JsonValue jd = new JsonValue();
-        jd.put(name, strings);
-        data.add(jd);
+        data.put(name, strings);
     }
     
     public void put(String name, boolean[] bools) {
-        JsonValue jd = new JsonValue();
-        jd.put(name, bools);
-        data.add(jd);
+        data.put(name, bools);
     }
     
     public void put(String name, char[] characters) {
-        JsonValue jd = new JsonValue();
-        jd.put(name, characters);
-        data.add(jd);
+        data.put(name, characters);
     }
     
     /**
@@ -176,14 +134,11 @@ public class JsonWriter {
      * @throws PrimitiveWrapperException when obj cannot be cast to a primitive wrapper or String
      */
     public void putGenericPrimitive(String name, Object obj) throws PrimitiveWrapperException {
-        JsonValue jd = new JsonValue();
-        jd.putGenericPrimitive(name, obj);
-        if(!jd.sb.toString().trim().equals("")) //!jd.sb.isEmpty() in Java 15+
-            data.add(jd);
+        data.putGenericPrimitive(name, obj);
     }
     
     public void reset() {
-        data.clear();
+        data = new JsonObject();
     }
     
     /**
@@ -194,9 +149,7 @@ public class JsonWriter {
      */
     public JsonWriter copyOf() {
         JsonWriter jw = new JsonWriter();
-        data.forEach(jd -> {
-            jw.data.add(jd.copyOf());
-        });
+        jw.data = data.copyOf();
         return jw;
     }
     
@@ -211,26 +164,26 @@ public class JsonWriter {
     }
     
     /**
+     * Creates a Stream of SimpleEntrys which contains a JSON name and value pair.
+     * @return 
+     */
+    public Stream<SimpleEntry<String, String>> stream() {
+        Builder stream = Stream.builder();
+        JsonParser parser = toJsonParser();
+        String[] names = parser.parseValues();
+        try {
+            for(String n : names)
+                stream.add(new SimpleEntry(n, parser.parseStringedValue(n)));
+        } catch(JsonValueNotFoundException e) {}
+        return stream.build();
+    }
+    
+    /**
      * Writes the JSON stored in the writer to the JsonParser.
      * @param jp the JsonParser to write the data to.
      */
     public void write(JsonParser jp) {
-        StringBuilder writer = new StringBuilder();
-        if(data.size() == 1 && data.get(0) instanceof JsonObject) {
-            writer.append(((JsonObject)data.get(0)).writeLastNameless());
-            return;
-        }
-
-        writer.append("{\n");
-        for(JsonData jd : data) {
-            if(data.indexOf(jd)==data.size()-1)
-                writer.append(jd.writeLast());
-            else
-                writer.append(jd.write());
-        }
-        writer.append("}");
-        
-        jp.json = writer.toString();
+        jp.json = write();
         jp.init();
     }
     
@@ -245,21 +198,7 @@ public class JsonWriter {
      * @return 
      */
     public String write() {
-        StringBuilder writer = new StringBuilder();
-        if(data.size() == 1 && data.get(0) instanceof JsonObject) {
-            writer.append(((JsonObject)data.get(0)).writeLastNameless());
-            return writer.toString();
-        }
-
-        writer.append("{\n");
-        for(JsonData jd : data) {
-            if(data.indexOf(jd)==data.size()-1)
-                writer.append(jd.writeLast());
-            else
-                writer.append(jd.write());
-        }
-        writer.append("}");
-        return writer.toString();
+        return data.toString();
     }
     
     public String write(boolean resetWriter) {
@@ -279,19 +218,7 @@ public class JsonWriter {
      */
     public void write(File file) throws IOException {
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            if(data.size() == 1 && data.get(0) instanceof JsonObject) {
-                writer.append(((JsonObject)data.get(0)).writeLastNameless());
-                return;
-            }
-            
-            writer.append("{\n");
-            for(JsonData jd : data) {
-                if(data.indexOf(jd)==data.size()-1)
-                    writer.append(jd.writeLast());
-                else
-                    writer.append(jd.write());
-            }
-            writer.append("}");
+            writer.append(write());
         }
     }
     

@@ -19,7 +19,9 @@ public class JsonObject extends JsonArrayable {
     /**
      * Internally used constructor
      */
-    JsonObject() {}
+    JsonObject() {
+        name = "";
+    }
     
     public JsonObject(String name) {
         if(name.isEmpty())
@@ -29,24 +31,28 @@ public class JsonObject extends JsonArrayable {
     
     public JsonObject putObject(String name) {
         JsonObject jo = new JsonObject(name);
-        jo.indent = jo.indent + indent;
+        jo.indent = indent + TAB;
         data.add(jo);
         lastPutObject = true;
         return jo;
     }
     
+    public void putObject(Stringifiable s) {
+        putObject(s.toJson());
+    }
+    
     public void putObject(JsonObject jo) {
         if(jo.name.isEmpty())
             throw new InvalidNameException();
-        insertIndent(jo, indent);
+        insertIndent(jo, indent+TAB);
         data.add(jo);
         lastPutObject = true;
     }
     
-    public void putObject(JsonObject jo, String name) {
+    public void putObject(String name, JsonObject jo) {
         if(jo.name.isEmpty())
             throw new InvalidNameException();
-        insertIndent(jo, indent);
+        insertIndent(jo, indent+TAB);
         jo.name = name;
         data.add(jo);
         lastPutObject = true;
@@ -54,7 +60,7 @@ public class JsonObject extends JsonArrayable {
     
     public JsonObjectArray putObjectArray(String name) {
         JsonObjectArray joa = new JsonObjectArray(name);
-        joa.indent = joa.indent + indent;
+        joa.indent = indent+TAB;
         data.add(joa);
         lastPutObject = true;
         return joa;
@@ -63,7 +69,7 @@ public class JsonObject extends JsonArrayable {
     public void put(String name, byte number) {
         if(lastPutObject) {
             JsonValue jd = new JsonValue();
-            jd.indent = jd.indent+indent;
+            jd.indent = indent+TAB;
             jd.put(name, number);
             data.add(jd);
             lastPutObject = false;
@@ -75,7 +81,7 @@ public class JsonObject extends JsonArrayable {
     public void put(String name, short number) {
         if(lastPutObject) {
             JsonValue jd = new JsonValue();
-            jd.indent = jd.indent+indent;
+            jd.indent = indent+TAB;
             jd.put(name, number);
             data.add(jd);
             lastPutObject = false;
@@ -87,7 +93,7 @@ public class JsonObject extends JsonArrayable {
     public void put(String name, int number) {
         if(lastPutObject) {
             JsonValue jd = new JsonValue();
-            jd.indent = jd.indent+indent;
+            jd.indent = indent+TAB;
             jd.put(name, number);
             data.add(jd);
             lastPutObject = false;
@@ -99,7 +105,7 @@ public class JsonObject extends JsonArrayable {
     public void put(String name, float number) {
         if(lastPutObject) {
             JsonValue jd = new JsonValue();
-            jd.indent = jd.indent+indent;
+            jd.indent = indent+TAB;
             jd.put(name, number);
             data.add(jd);
             lastPutObject = false;
@@ -111,7 +117,7 @@ public class JsonObject extends JsonArrayable {
     public void put(String name, double number) {
         if(lastPutObject) {
             JsonValue jd = new JsonValue();
-            jd.indent = jd.indent+indent;
+            jd.indent = indent+TAB;
             jd.put(name, number);
             data.add(jd);
             lastPutObject = false;
@@ -123,7 +129,7 @@ public class JsonObject extends JsonArrayable {
     public void put(String name, long number) {
         if(lastPutObject) {
             JsonValue jd = new JsonValue();
-            jd.indent = jd.indent+indent;
+            jd.indent = indent+TAB;
             jd.put(name, number);
             data.add(jd);
             lastPutObject = false;
@@ -135,7 +141,7 @@ public class JsonObject extends JsonArrayable {
     public void put(String name, String string) {
         if(lastPutObject) {
             JsonValue jd = new JsonValue();
-            jd.indent = jd.indent+indent;
+            jd.indent = indent+TAB;
             jd.put(name, string);
             data.add(jd);
             lastPutObject = false;
@@ -147,7 +153,7 @@ public class JsonObject extends JsonArrayable {
     public void put(String name, boolean bool) {
         if(lastPutObject) {
             JsonValue jd = new JsonValue();
-            jd.indent = jd.indent+indent;
+            jd.indent = indent+TAB;
             jd.put(name, bool);
             data.add(jd);
             lastPutObject = false;
@@ -159,7 +165,7 @@ public class JsonObject extends JsonArrayable {
     public void put(String name, char character) {
         if(lastPutObject) {
             JsonValue jd = new JsonValue();
-            jd.indent = jd.indent+indent;
+            jd.indent = indent+TAB;
             jd.put(name, character);
             data.add(jd);
             lastPutObject = false;
@@ -171,7 +177,7 @@ public class JsonObject extends JsonArrayable {
     public void put(String name, byte[] numbers) {
         if(lastPutObject) {
             JsonValue jd = new JsonValue();
-            jd.indent = jd.indent+indent;
+            jd.indent = indent+TAB;
             jd.put(name, numbers);
             data.add(jd);
             lastPutObject = false;
@@ -183,7 +189,7 @@ public class JsonObject extends JsonArrayable {
     public void put(String name, short[] numbers) {
         if(lastPutObject) {
             JsonValue jd = new JsonValue();
-            jd.indent = jd.indent+indent;
+            jd.indent = indent+TAB;
             jd.put(name, numbers);
             data.add(jd);
             lastPutObject = false;
@@ -195,7 +201,7 @@ public class JsonObject extends JsonArrayable {
     public void put(String name, int[] numbers) {
         if(lastPutObject) {
             JsonValue jd = new JsonValue();
-            jd.indent = jd.indent+indent;
+            jd.indent = indent+TAB;
             jd.put(name, numbers);
             data.add(jd);
             lastPutObject = false;
@@ -207,7 +213,7 @@ public class JsonObject extends JsonArrayable {
     public void put(String name, float[] numbers) {
         if(lastPutObject) {
             JsonValue jd = new JsonValue();
-            jd.indent = jd.indent+indent;
+            jd.indent = indent+TAB;
             jd.put(name, numbers);
             data.add(jd);
             lastPutObject = false;
@@ -219,7 +225,7 @@ public class JsonObject extends JsonArrayable {
     public void put(String name, double[] numbers) {
         if(lastPutObject) {
             JsonValue jd = new JsonValue();
-            jd.indent = jd.indent+indent;
+            jd.indent = indent+TAB;
             jd.put(name, numbers);
             data.add(jd);
             lastPutObject = false;
@@ -231,7 +237,7 @@ public class JsonObject extends JsonArrayable {
     public void put(String name, long[] numbers) {
         if(lastPutObject) {
             JsonValue jd = new JsonValue();
-            jd.indent = jd.indent+indent;
+            jd.indent = indent+TAB;
             jd.put(name, numbers);
             data.add(jd);
             lastPutObject = false;
@@ -243,7 +249,7 @@ public class JsonObject extends JsonArrayable {
     public void put(String name) {
         if(lastPutObject) {
             JsonValue jd = new JsonValue();
-            jd.indent = jd.indent+indent;
+            jd.indent = indent+TAB;
             jd.put(name);
             data.add(jd);
             lastPutObject = false;
@@ -255,7 +261,7 @@ public class JsonObject extends JsonArrayable {
     public void put(String name, String[] strings) {
         if(lastPutObject) {
             JsonValue jd = new JsonValue();
-            jd.indent = jd.indent+indent;
+            jd.indent = indent+TAB;
             jd.put(name, strings);
             data.add(jd);
             lastPutObject = false;
@@ -267,7 +273,7 @@ public class JsonObject extends JsonArrayable {
     public void put(String name, boolean[] bools) {
         if(lastPutObject) {
             JsonValue jd = new JsonValue();
-            jd.indent = jd.indent+indent;
+            jd.indent = indent+TAB;
             jd.put(name, bools);
             data.add(jd);
             lastPutObject = false;
@@ -279,7 +285,7 @@ public class JsonObject extends JsonArrayable {
     public void put(String name, char[] characters) {
         if(lastPutObject) {
             JsonValue jd = new JsonValue();
-            jd.indent = jd.indent+indent;
+            jd.indent = indent+TAB;
             jd.put(name, characters);
             data.add(jd);
             lastPutObject = false;
@@ -298,7 +304,7 @@ public class JsonObject extends JsonArrayable {
     public void putGenericPrimitive(String name, Object obj) throws PrimitiveWrapperException {
         if(lastPutObject) {
             JsonValue jd = new JsonValue();
-            jd.indent = jd.indent+indent;
+            jd.indent = indent+TAB;
             jd.putGenericPrimitive(name, obj);
             data.add(jd);
             lastPutObject = false;
@@ -444,7 +450,7 @@ public class JsonObject extends JsonArrayable {
                             JsonObject[] objArray = parser.parseObjectArray(n);
                             JsonObjectArray joa = jo.putObjectArray(n);
                             for(JsonObject obj : objArray)
-                                joa.putObject(obj, n);
+                                joa.putObject(n, obj);
                             continue;
                         } catch(IncorrectParseTypeException | JsonValueNotFoundException ex) {}
                     }
@@ -457,7 +463,7 @@ public class JsonObject extends JsonArrayable {
                 } catch(IncorrectParseTypeException e) {}
                 
                 try {
-                    jo.putObject(parser.parseObject(n), n);
+                    jo.putObject(n, parser.parseObject(n));
                 } catch(IncorrectParseTypeException | JsonValueNotFoundException e) {}
                 
             } catch(JsonValueNotFoundException e) {}

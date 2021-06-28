@@ -26,7 +26,6 @@ import com.reactnebula.simplejsonutil.exceptions.JsonValueNotFoundException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -92,7 +91,7 @@ public class JsonParser {
                 depthMap.put(i, currentDepth);
             }
         }
-        if(currentDepth != 0) 
+        if(currentDepth != 0)
             throw new InvalidJsonException("Unmatched {} or []", json);
     }
     

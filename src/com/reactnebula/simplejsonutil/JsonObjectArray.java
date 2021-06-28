@@ -37,40 +37,44 @@ public class JsonObjectArray extends JsonArrayable {
     
     public JsonObject putObject() {
         JsonObject jo = new JsonObject();
-        jo.indent = jo.indent+indent;
+        jo.indent = indent+TAB;
         jObjects.add(jo);
         return jo;
     }
     
     public JsonObject putObject(String name) {
         JsonObject jo = new JsonObject(name);
-        jo.indent = jo.indent+indent;
+        jo.indent = indent+TAB;
         jObjects.add(jo);
         return jo;
     }
     
+    public void putObject(Stringifiable s) {
+        putObject(s.toJson());
+    }
+    
     public void putObject(JsonObject jo) {
-        JsonObject.insertIndent(jo, indent);
+        JsonObject.insertIndent(jo, indent+TAB);
         jObjects.add(jo);
     }
     
-    public void putObject(JsonObject jo, String name) {
+    public void putObject(String name, JsonObject jo) {
         if(name.isEmpty())
             throw new InvalidNameException();
-        JsonObject.insertIndent(jo, indent);
+        JsonObject.insertIndent(jo, indent+TAB);
         jo.name = name;
         jObjects.add(jo);
     }
     
     public JsonObjectArray putObjectArray(String name) {
         JsonObjectArray joa = new JsonObjectArray(name);
-        joa.indent = joa.indent + indent;
+        joa.indent = indent + TAB;
         jObjects.add(joa);
         return joa;
     }
     
     public void putObjectArray(JsonObjectArray joa, String name) {
-        insertIndent(joa, indent);
+        insertIndent(joa, indent+TAB);
         joa.name = name;
         jObjects.add(joa);
     }

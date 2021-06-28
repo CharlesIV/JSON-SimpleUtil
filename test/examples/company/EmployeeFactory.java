@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Charles
+ * Copyright (C) 2021 Charles
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package Test;
+package examples.company;
 
 import com.reactnebula.simplejsonutil.exceptions.IncompatibleJsonObjectException;
 import com.reactnebula.simplejsonutil.JsonObject;
@@ -25,11 +25,26 @@ import com.reactnebula.simplejsonutil.ObjectFactory;
 /**
  *
  * @author Charles
+ * 
+ * 
+ * DISCLAIMER: This is just to demonstrate a possible way to use the SimpleJsonUtil.
+ * The code here is not meant to be used for anything and is not written to be used
+ * as a guide to writing code for a "Company", "Employee", or "EmployeeFactory".
  */
 public class EmployeeFactory implements ObjectFactory {
     
-    public Employee newEmployee(String firstName, String lastName, char gender, String address, int age, String... children) {
-        return new Employee(firstName, lastName, gender, address, age, children);
+    public static final int STARTING_PAY = 10;
+    
+    public Employee newEmployee(String firstName, String lastName, char gender, String department) {
+        Employee e = new Employee(firstName, lastName, gender, department);
+        e.setPay(STARTING_PAY);
+        return e;
+    }
+    
+    public Employee newEmployee(String firstName, String lastName, char gender, String department, int pay) {
+        Employee e = new Employee(firstName, lastName, gender, department);
+        e.setPay(pay);
+        return e;
     }
     
     @Override
@@ -39,10 +54,21 @@ public class EmployeeFactory implements ObjectFactory {
             String firstName = jp.parseString("firstName");
             String lastName = jp.parseString("lastName");
             char gender = jp.parseCharacter("gender");
-            String address = jp.parseString("address");
-            int age = jp.parseInteger("age");
-            String[] children = jp.parseStringArray("children");
-            return new Employee(firstName, lastName, gender, address, age, children);
+            String department = jp.parseString("department");
+            int pay = jp.parseInteger("pay");
+            
+            Employee e = new Employee(firstName, lastName, gender, department);
+            if(pay != STARTING_PAY)
+                e.setPay(pay);
+            
+            
+            try {
+                JsonObject manager = jp.parseObject("manager");
+                Employee manag = fromJson(manager);
+                e.setManager(manag);
+            } catch(JsonValueNotFoundException ex) {}
+            
+            return e;
         } catch (JsonValueNotFoundException ex) {
             throw new IncompatibleJsonObjectException(ex.getMessage());
         }
