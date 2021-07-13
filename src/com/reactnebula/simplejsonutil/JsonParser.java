@@ -19,7 +19,6 @@ package com.reactnebula.simplejsonutil;
 import static com.reactnebula.simplejsonutil.JsonData.ARRAY_SEPERATOR;
 import static com.reactnebula.simplejsonutil.JsonData.SEPERATOR;
 import static com.reactnebula.simplejsonutil.JsonData.STRING_ARRAY_SEPERATOR;
-import static com.reactnebula.simplejsonutil.JsonData.VALUE_BREAK;
 import com.reactnebula.simplejsonutil.exceptions.IncorrectParseTypeException;
 import com.reactnebula.simplejsonutil.exceptions.InvalidJsonException;
 import com.reactnebula.simplejsonutil.exceptions.JsonValueNotFoundException;
@@ -28,6 +27,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  *
@@ -36,6 +36,7 @@ import java.util.HashMap;
 public class JsonParser {
     String json;
     private HashMap<Integer, Integer> depthMap;
+    private LinkedHashMap<Integer, Boolean> quoteMap;
     private int index, depth, greatestIndex;
     
     /**
@@ -80,19 +81,36 @@ public class JsonParser {
      */
     final void init() {
         depthMap = new HashMap<>();
+        quoteMap = new LinkedHashMap<>();
         int currentDepth = 0;
+        boolean quotes = false;
         for(int i = 0; i < json.length(); i++) {
             char c = json.charAt(i);
-            if(c=='{' || c=='[') {
-                currentDepth++;
-                depthMap.put(i, currentDepth);
-            } else if(c=='}' || c==']') {
-                currentDepth--;
-                depthMap.put(i, currentDepth);
+            switch (c) {
+                case '{':
+                case '[':
+                    currentDepth++;
+                    depthMap.put(i, currentDepth);
+                    break;
+                case '}':
+                case ']':
+                    currentDepth--;
+                    depthMap.put(i, currentDepth);
+                    break;
+                case '"':
+                    if(i > 0 && json.charAt(i-1)=='\\')
+                        break;
+                    quotes = !quotes;
+                    quoteMap.put(i, quotes);
+                    break;
+                default:
+                    break;
             }
         }
         if(currentDepth != 0)
             throw new InvalidJsonException("Unmatched {} or []", json);
+        if(quotes)
+            throw new InvalidJsonException("Unmatched \"", json);
     }
     
     /**
@@ -155,8 +173,18 @@ public class JsonParser {
         return depth;
     }
     
+    private boolean inQuotes(int index) {
+        int prevKey = -1;//(Integer)quoteMap.keySet().toArray()[0];
+        for(int key : quoteMap.keySet()) {
+            if(key >= index)
+                return quoteMap.get(prevKey);
+            prevKey = key;
+        }
+        return false;
+    }
+    
     public String[] parseValues() {
-        String[] keys = json.split(SEPERATOR);
+        String[] keys = json.replace(" ", "").split(SEPERATOR);
         int index;
         ArrayList<String> valid = new ArrayList<>();
         for(int i = 0; i < keys.length-1; i++) {
@@ -201,7 +229,9 @@ public class JsonParser {
         
         String result = json.substring(index);
         int newBreak = index;
-        while((newBreak = json.indexOf(VALUE_BREAK, newBreak+1)) != -1) {
+        while((newBreak = json.indexOf(",", newBreak+1)) != -1) {
+            if(inQuotes(newBreak))
+                continue;
             if(findDepth(newBreak)==dep)
                 break;
         }
@@ -218,7 +248,11 @@ public class JsonParser {
             result = result.substring(0, ending).trim();
         }
         StringBuilder value = new StringBuilder();
-        value.append(result.replace("\""+path[dep-1]+seperator, ""));
+        value.append(result);
+        
+        String replacement = "\""+path[dep-1]+seperator;
+        int i = value.indexOf(replacement);
+        value.replace(i, i+replacement.length(), "");
         
         if(value.charAt(value.length()-1)==',')
             value.deleteCharAt(value.length()-1);
@@ -356,7 +390,7 @@ public class JsonParser {
             if(value.charAt(0)!='"')
                 throw new IncorrectParseTypeException("String", value);
             value = revertEscapedString(value);
-            return value.substring(1, value.length()-1);
+            return value.substring(1, value.length()-(value.charAt(value.length()-1)=='"' ? 1 : 0));
         } catch(StringIndexOutOfBoundsException e) {
             throw new IncorrectParseTypeException("String", value);
         }
@@ -719,9 +753,9 @@ public class JsonParser {
         indexes.add(array.length()-1);
         
         JsonObject[] jObjects = new JsonObject[indexes.size()];
-        int lastIndex = 0;
+        int lastIndex = -1;
         for(int i = 0; i < indexes.size(); i++) {
-            String json = array.substring(lastIndex, indexes.get(i));
+            String json = array.substring(lastIndex+1, indexes.get(i));
             jObjects[i] = JsonObject.fromJSON(json);
             lastIndex = indexes.get(i);
         }
@@ -737,8 +771,6 @@ public class JsonParser {
             value = value.replace("\\\n", "\n");
         if(value.contains("\\\t"))
             value = value.replace("\\\t", "\t");
-        if(value.contains("\\\'"))
-            value = value.replace("\\\'", "\'");
         if(value.contains("\\\f"))
             value = value.replace("\\\f", "\f");
         if(value.contains("\\\r"))

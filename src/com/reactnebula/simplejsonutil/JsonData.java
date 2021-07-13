@@ -24,7 +24,6 @@ public abstract class JsonData {
     protected static final String TAB = "\t";
     protected static final String SEPERATOR = "\":";
     protected static final String ARRAY_SEPERATOR = "\":[";
-    protected static final String VALUE_BREAK = "\n\t";
     protected static final String STRING_ARRAY_SEPERATOR = "\", \"";
     
     protected String indent = "";

@@ -235,8 +235,6 @@ public class JsonValue extends JsonData {
                 return "\\\n";
             case '\t':
                 return "\\\t";
-            case '\'':
-                return "\\\'";
             case '\f':
                 return "\\\f";
             case '\r':

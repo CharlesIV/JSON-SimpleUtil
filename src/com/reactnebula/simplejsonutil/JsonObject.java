@@ -355,7 +355,7 @@ public class JsonObject extends JsonArrayable {
                 int index = 0;
                 while(index != -1) {
                     json.insert(index+1, indent);
-                    index = json.indexOf(VALUE_BREAK, index+indent.length()+1);
+                    index = json.indexOf("\n\t", index+indent.length()+1);
                 }
             } else if(jd instanceof JsonObject) {
                 insertIndent(((JsonObject)jd), indent);

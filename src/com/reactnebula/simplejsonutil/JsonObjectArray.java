@@ -139,14 +139,14 @@ public class JsonObjectArray extends JsonArrayable {
     @Override
     protected String writeLast() {
         StringBuilder written = new StringBuilder();
-        written.append(indent).append('\"').append(name).append(ARRAY_SEPERATOR).append('\n');
+        written.append(indent.substring(0, indent.length()/2+1)).append('\"').append(name).append(ARRAY_SEPERATOR).append('\n');
         jObjects.forEach(jo -> {
             if(jo == jObjects.get(jObjects.size()-1)) 
                 written.append(jo.writeLastNameless());
             else
                 written.append(jo.writeNameless());
         });
-        written.append(indent).append("]\n");
+        written.append(indent.substring(0, indent.length()/2+1)).append("]\n");
         return written.toString();
     }
     
