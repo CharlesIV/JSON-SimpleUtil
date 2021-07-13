@@ -231,11 +231,23 @@ public class JsonParser {
         int newBreak = index;
         
         String breakString = (SEPERATOR.equals(seperator) ? "," : "]");
-        while((newBreak = json.indexOf(breakString, newBreak+1)) != -1) {
+        ending: while((newBreak = json.indexOf(breakString, newBreak+1)) != -1) {
             if(inQuotes(newBreak))
                 continue;
-            if(findDepth(newBreak)==dep)
+            int currentDep = findDepth(newBreak);
+            if(currentDep==dep)
                 break;
+            if(currentDep < dep) {
+                int curlyBreak = index;
+                while((curlyBreak = json.indexOf("}", curlyBreak+1)) != -1) {
+                    if(inQuotes(curlyBreak))
+                        continue;
+                    if(findDepth(curlyBreak)==dep-1) {
+                        newBreak = curlyBreak;
+                        break ending;
+                    }
+                }
+            }
         }
         if(newBreak != -1)
             result = result.substring(0, newBreak-index);
@@ -262,7 +274,7 @@ public class JsonParser {
         if(breakString.equals("]"))
             value.append(']');
         
-        return value.toString();
+        return value.toString().trim();
     }
     
     public byte parseByte(String name, byte defaultValue) {
