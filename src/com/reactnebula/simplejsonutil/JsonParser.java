@@ -93,7 +93,7 @@ public class JsonParser {
                     depthMap.put(i, currentDepth);
                     break;
                 case '}':
-                case ']':
+                case ']':    
                     currentDepth--;
                     depthMap.put(i, currentDepth);
                     break;
@@ -174,7 +174,7 @@ public class JsonParser {
     }
     
     private boolean inQuotes(int index) {
-        int prevKey = -1;//(Integer)quoteMap.keySet().toArray()[0];
+        int prevKey = -1;
         for(int key : quoteMap.keySet()) {
             if(key >= index)
                 return quoteMap.get(prevKey);
@@ -229,7 +229,9 @@ public class JsonParser {
         
         String result = json.substring(index);
         int newBreak = index;
-        while((newBreak = json.indexOf(",", newBreak+1)) != -1) {
+        
+        String breakString = (SEPERATOR.equals(seperator) ? "," : "]");
+        while((newBreak = json.indexOf(breakString, newBreak+1)) != -1) {
             if(inQuotes(newBreak))
                 continue;
             if(findDepth(newBreak)==dep)
@@ -256,6 +258,9 @@ public class JsonParser {
         
         if(value.charAt(value.length()-1)==',')
             value.deleteCharAt(value.length()-1);
+        
+        if(breakString.equals("]"))
+            value.append(']');
         
         return value.toString();
     }
