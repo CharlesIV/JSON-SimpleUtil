@@ -24,5 +24,11 @@ import com.reactnebula.simplejsonutil.exceptions.IncompatibleJsonObjectException
  */
 @FunctionalInterface
 public interface ObjectFactory<T> {
+    /**
+     * Takes a JsonObject and returns an object of type T
+     * @param jo
+     * @return
+     * @throws IncompatibleJsonObjectException 
+     */
     public T fromJson(JsonObject jo) throws IncompatibleJsonObjectException;
 }

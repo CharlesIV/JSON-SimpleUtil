@@ -168,12 +168,12 @@ public class JsonWriter {
      * @return 
      */
     public Stream<SimpleEntry<String, String>> stream() {
-        Builder stream = Stream.builder();
+        Builder<SimpleEntry<String, String>> stream = Stream.builder();
         JsonParser parser = toJsonParser();
         String[] names = parser.parseValues();
         try {
             for(String n : names)
-                stream.add(new SimpleEntry(n, parser.parseStringedValue(n)));
+                stream.add(new SimpleEntry<>(n, parser.parseStringedValue(n)));
         } catch(JsonValueNotFoundException e) {}
         return stream.build();
     }
@@ -187,6 +187,11 @@ public class JsonWriter {
         jp.init();
     }
     
+    /**
+     * Writes the JSON stored in the writer to the JsonParser. Afterwards resets
+     * the JsonWriter if resetWriter is true.
+     * @param jp the JsonParser to write the data to.
+     */
     public void write(JsonParser jp, boolean resetWriter) {
         write(jp);
         if(resetWriter)
@@ -201,6 +206,11 @@ public class JsonWriter {
         return data.toString();
     }
     
+    /**
+     * Writes the JSON data to a String. Afterwards resets
+     * the JsonWriter if resetWriter is true.
+     * @return 
+     */
     public String write(boolean resetWriter) {
         try {
             return write();
@@ -222,8 +232,15 @@ public class JsonWriter {
         }
     }
     
+    /**
+     * Used to write a file to the system in JSON format. Afterwards resets
+     * the JsonWriter if resetWriter is true.
+     * 
+     * @param file 
+     * @throws IOException 
+     */
     public void write(File file, boolean resetWriter) throws IOException {
-        write();
+        write(file);
         if(resetWriter)
             reset();
     }

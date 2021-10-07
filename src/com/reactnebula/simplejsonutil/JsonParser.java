@@ -55,9 +55,9 @@ public class JsonParser {
     }
     
     /**
-     * Takes a JSON String to parse data from. The parser DOES NOT check for correct syntax*! (Garbage in, Garbage Out)
+     * Takes a JSON String to parse data from. The parser DOES NOT check for correct syntax!* (Garbage in, Garbage Out)
      * <br/>
-     * *Does check that all {} and [] are in pairs.
+     * *Does check that all {}, [], and "" are in pairs.
      * @param json 
      */
     public JsonParser(String json) {
@@ -151,7 +151,7 @@ public class JsonParser {
     
     private int getIndexOfValue(String key, int depth, int startIndex) {
         index = startIndex-1;
-        int depthTest = 0;
+        int depthTest;
         while((index = json.indexOf(key, index+1)) != -1) {
             depthTest = findDepth(index);
             if(depthTest==depth) 
@@ -184,15 +184,15 @@ public class JsonParser {
     }
     
     public String[] parseValues() {
-        String[] keys = json.replace(" ", "").split(SEPERATOR);
-        int index;
+        String[] keys = json.split(SEPERATOR);
+        int lIndex;
         ArrayList<String> valid = new ArrayList<>();
         for(int i = 0; i < keys.length-1; i++) {
-            for(index = keys[i].length()-1; index > 0; index--) {
-                if(keys[i].charAt(index)=='\"')
+            for(lIndex = keys[i].length()-1; lIndex > 0; lIndex--) {
+                if(keys[i].charAt(lIndex)=='\"')
                     break;
             }
-            keys[i] = keys[i].substring(index+1, keys[i].length());
+            keys[i] = keys[i].substring(lIndex+1, keys[i].length());
             if(findDepth(json.indexOf("\""+keys[i]+SEPERATOR))==1)
                 valid.add(keys[i]);
         }
@@ -212,23 +212,23 @@ public class JsonParser {
     
     private String parseStringedValue(String name, String seperator) throws JsonValueNotFoundException {
         String[] path = name.split("\\.");
-        int index = -1;
+        int lIndex = -1;
         int lastIndex = -1;
         int dep = 0;
         for(int i = 0; i < path.length; i++) {
             dep = i+1;
             int startIndex = 0;
             do {
-                index = getIndexOfValue("\""+path[i]+(i+1==path.length ? seperator : SEPERATOR), dep, startIndex);
-                startIndex = index+1;
-            } while(lastIndex > index && index != -1);
-            if(index==-1)
+                lIndex = getIndexOfValue("\""+path[i]+(i+1==path.length ? seperator : SEPERATOR), dep, startIndex);
+                startIndex = lIndex+1;
+            } while(lastIndex > lIndex && lIndex != -1);
+            if(lIndex==-1)
                 throw new JsonValueNotFoundException(name);
-            lastIndex = index;
+            lastIndex = lIndex;
         }
         
-        String result = json.substring(index);
-        int newBreak = index;
+        String result = json.substring(lIndex);
+        int newBreak = lIndex;
         
         String breakString = (SEPERATOR.equals(seperator) ? "," : "]");
         ending: while((newBreak = json.indexOf(breakString, newBreak+1)) != -1) {
@@ -238,7 +238,7 @@ public class JsonParser {
             if(currentDep==dep)
                 break;
             if(currentDep < dep) {
-                int curlyBreak = index;
+                int curlyBreak = lIndex;
                 while((curlyBreak = json.indexOf("}", curlyBreak+1)) != -1) {
                     if(inQuotes(curlyBreak))
                         continue;
@@ -250,11 +250,11 @@ public class JsonParser {
             }
         }
         if(newBreak != -1)
-            result = result.substring(0, newBreak-index);
+            result = result.substring(0, newBreak-lIndex);
         else {
             int ending = result.length()-1;
             for(int i = result.length(); i > 0; i--) {
-                if(findDepth(i+index) == dep) {
+                if(findDepth(i+lIndex) == dep) {
                     ending = i;
                     break;
                 }
@@ -772,8 +772,8 @@ public class JsonParser {
         JsonObject[] jObjects = new JsonObject[indexes.size()];
         int lastIndex = -1;
         for(int i = 0; i < indexes.size(); i++) {
-            String json = array.substring(lastIndex+1, indexes.get(i));
-            jObjects[i] = JsonObject.fromJSON(json);
+            String joJson = array.substring(lastIndex+1, indexes.get(i));
+            jObjects[i] = JsonObject.fromJSON(joJson);
             lastIndex = indexes.get(i);
         }
         return jObjects;
