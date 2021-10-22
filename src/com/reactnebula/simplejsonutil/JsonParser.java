@@ -100,8 +100,7 @@ public class JsonParser {
                 case '"':
                     if(i > 0 && json.charAt(i-1)=='\\')
                         break;
-                    quotes = !quotes;
-                    quoteMap.put(i, quotes);
+                    quoteMap.put(i, quotes ^= true);
                     break;
                 default:
                     break;
@@ -183,6 +182,10 @@ public class JsonParser {
         return false;
     }
     
+    /**
+     * A method that returns an array of keys for every value in the parsed JSON.
+     * @return an array of keys
+     */
     public String[] parseValues() {
         String[] keys = json.split(SEPERATOR);
         int lIndex;

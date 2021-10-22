@@ -18,6 +18,7 @@ package com.reactnebula.simplejsonutil;
 
 import com.reactnebula.simplejsonutil.exceptions.IncompatibleJsonObjectException;
 import com.reactnebula.simplejsonutil.exceptions.InvalidNameException;
+import com.reactnebula.simplejsonutil.exceptions.JsonValueNotFoundException;
 import java.util.ArrayList;
 
 /**
@@ -55,6 +56,7 @@ public class JsonObjectArray extends JsonArrayable {
     
     public void putObject(JsonObject jo) {
         JsonObject.insertIndent(jo, indent+TAB);
+        jo.indent = indent;
         jObjects.add(jo);
     }
     
@@ -62,6 +64,7 @@ public class JsonObjectArray extends JsonArrayable {
         if(name.isEmpty())
             throw new InvalidNameException();
         JsonObject.insertIndent(jo, indent+TAB);
+        jo.indent = indent;
         jo.name = name;
         jObjects.add(jo);
     }
@@ -88,8 +91,12 @@ public class JsonObjectArray extends JsonArrayable {
     }
     
     public JsonObject[] toJsonObjects() {
-        //to do
-        return new JsonObject[0];
+        JsonParser parser = new JsonParser("{\n" + writeLast() + "}");
+        try {
+            return parser.parseObjectArray(name);
+        } catch(JsonValueNotFoundException e) {
+            return new JsonObject[0];
+        }
     }
     
     static void insertIndent(JsonObjectArray joa, String indent) {
@@ -117,7 +124,7 @@ public class JsonObjectArray extends JsonArrayable {
     @Override
     protected String writeLastNameless() {
         StringBuilder written = new StringBuilder();
-        written.append('[');
+        written.append(indent).append('[').append('\n');
         jObjects.forEach(jo -> {
             if(jo == jObjects.get(jObjects.size()-1)) 
                 written.append(jo.writeLastNameless());
@@ -139,14 +146,14 @@ public class JsonObjectArray extends JsonArrayable {
     @Override
     protected String writeLast() {
         StringBuilder written = new StringBuilder();
-        written.append(indent.substring(0, indent.length()/2+1)).append('\"').append(name).append(ARRAY_SEPERATOR).append('\n');
+        written.append(indent).append('\"').append(name).append(ARRAY_SEPERATOR).append('\n');
         jObjects.forEach(jo -> {
             if(jo == jObjects.get(jObjects.size()-1)) 
                 written.append(jo.writeLastNameless());
             else
                 written.append(jo.writeNameless());
         });
-        written.append(indent.substring(0, indent.length()/2+1)).append("]\n");
+        written.append(indent).append("]\n");
         return written.toString();
     }
     

@@ -40,7 +40,7 @@ public class JsonObject extends JsonArrayable {
     public void putObject(Stringifiable s) {
         putObject(s.toJson());
     }
-    
+
     public void putObject(JsonObject jo) {
         if(jo.name.isEmpty())
             throw new InvalidNameException();
@@ -50,7 +50,7 @@ public class JsonObject extends JsonArrayable {
     }
     
     public void putObject(String name, JsonObject jo) {
-        if(jo.name.isEmpty())
+        if(name.isEmpty())
             throw new InvalidNameException();
         insertIndent(jo, indent+TAB);
         jo.name = name;
@@ -349,7 +349,6 @@ public class JsonObject extends JsonArrayable {
             return;
         jo.indent = jo.indent + indent;
         for(JsonData jd : jo.data) {
-            jd.indent = jd.indent + indent;
             if(jd instanceof JsonValue) {
                 StringBuilder json = ((JsonValue)jd).sb;
                 int index = 0;
